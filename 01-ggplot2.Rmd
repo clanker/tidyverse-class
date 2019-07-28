@@ -1,0 +1,357 @@
+# tibbles, ggplot2, and the _tidyverse_ {#ch:intro}
+
+The tidyverse universe includes:
+
+```{r, echo=FALSE}
+library(tidyverse)
+```
+
+In general, the tidyverse is the following:
+
+1. provided the `pipe` command `%>%`
+  * `x %>% f(y, z, ...)` is `f(x, y, z, ...)`
+  * allows chained commands for better coherence
+  * e.g., `mtcars %>% apply(2, mean)` is error without `tidyr::%>%`
+2. `tibble` is the improved data structure of the tidyverse
+  * easier to read-in data to a useful format
+  * automatic type conversion
+  * nicer printing options
+3. `dplyr` provides tibble manipulation commands
+  * understandable data processing with `pipe` streams
+  * **filter** data faster
+  * **arrange** rows of data easily
+  * **select** columns quickly
+  * **mutate** variables
+  * **summarize** according to `group_by()`
+  * also provides SQL relational operations
+4. `ggplot2` is a plotting syntax (grammar of graphics)
+  * `qplot()` provides a sensible **q**uick **plot**
+  * apply plot types to data rather than the reverse
+  * e.g. `ggplot(data) + plot_type(aes(xvar, yvar, groups), options)`
+  * allows grid of plots by group using **facets**
+  * overlays statistical summaries, e.g. `+ geom_smooth(x, y)`
+  * "add" options such as transformed axes, labels, coordinates, etc.
+5. `readr` is a faster, less painful read-in method
+  * `read_fun` denotes `readr` functions (instead of `read.fun`)
+  * guesses column types
+  * offers writing functions, too
+  * allows read and write with RDS, R's binary format
+6. `tidyr` recharacterizes tibbles
+  * `spread()` turns key and value columns into key-category columns
+  * e.g., `state, year, pop` into `state, 1990, 1991, ...` of pop values
+  * `gather()` turns expands data frames by condensing columns
+  * e.g., condenses `1990, 1991, ...` into two `year, pop` columns
+7. Other helpful tidyverse packages:
+  * `stringr` offers many useful `str_fun` operations
+  * `forcats` has operations _for cat_egorical variables
+  * `lubridate` provides date and time control
+  * `purrr`
+
+The examples I'll use in the next few chapters
+are the Boston housing database
+and the Lahman baseball database.
+By doing analysis on these two data sets, I hope to
+introduce the power of the tidyverse.
+
+## Tibbles: Boston housing data
+Load, convert, print a tibble.
+```{r load-boston}
+# Convert to a tibble so it prints nicely
+library(MASS)
+select <- dplyr::select
+boston <- as_tibble(MASS::Boston)
+boston
+```
+
+```{r boston-vars}
+?MASS::Boston
+```
+
+* crim
+per capita crime rate by town.
+* zn
+proportion of residential land zoned for lots over 25,000 sq.ft.
+* indus
+proportion of non-retail business acres per town.
+* chas
+Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).
+* nox
+nitrogen oxides concentration (parts per 10 million).
+* rm
+average number of rooms per dwelling.
+* age
+proportion of owner-occupied units built prior to 1940.
+* dis
+weighted mean of distances to five Boston employment centres.
+* rad
+index of accessibility to radial highways.
+* tax
+full-value property-tax rate per \$10,000.
+* ptratio
+pupil-teacher ratio by town.
+* black
+$1000(Bk - 0.63)^2$ where Bk is the proportion of blacks by town.
+* lstat lower status of the population (percent).
+* medv median value of owner-occupied homes in \$1000s.
+
+A ggplot is the first declaration (usually variable `data` is defined),
+followed by graphics definitions (operations on the data):
+```{r price-rooms-1}
+ggplot(data = boston) + 
+  geom_point(mapping = aes(x = rm, y = medv), alpha=0.4) +
+  labs(x = "avg. rooms per house",
+       y = "median house value",
+       title = "House values vs. size in Boston")
+```
+
+Making a histogram of all numeric variables. First step, gather all variables.
+```{r intro-gather}
+boston %>%
+  keep(is.numeric) %>%  # strips all non-numeric columns (unnecessary here)
+  gather()  # puts all variable values in a single column 'value'
+```
+
+Facet wrap allows plotting each `key` level separately.
+```{r all-var-hist}
+boston %>% 
+  gather() %>%
+  ggplot() +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram(mapping = aes(value), bins=20)
+```
+
+From the histograms, there seems to be only a few values of `crim` over 30.
+```{r high-crime-obs}
+boston %>%
+  filter(crim > 30)
+```
+
+## ggplot2 and EDA
+But we want to know the conditional distributions according to `medv`.
+First, showing this with conditional densities.
+```{r cond-hist}
+boston %>% 
+  gather('key', 'value', -medv) %>%
+  mutate(price_gr = ntile(medv, 4)) %>%
+  ggplot(aes(value, group = price_gr)) +
+    facet_wrap(~ key, ncol = 4, scales = "free") +
+    geom_freqpoly(aes(color = price_gr), bins = 12)
+# Click on the expand icon at the top right to make bigger.
+```
+
+Appears `chas` is categorical.
+```{r change-chas}
+boston <- boston %>%
+  mutate(chas = factor(chas))
+```
+
+Second, scatterplots of median value vs. all variables.
+```{r medv-scatter, warning=F}
+boston %>%
+  gather('key', 'value', -c(medv, chas)) %>% 
+  ggplot(aes(x = value, y = medv)) +
+    facet_wrap( ~ key, scales = "free") +
+    geom_point(aes(shape = chas), size = 0.5, alpha = 0.25) +
+    geom_smooth(lwd = 0.5, se = TRUE) +
+  ggsave('plots/medv-scatter.pdf')
+# Click on the expand icon at the top right to make bigger.
+```
+
+There are ggplot jitter options, but none worked for me.
+```{r medv-jitter-nw, warning=F}
+boston %>%
+  gather('key', 'value', -c(medv, chas)) %>% 
+  ggplot(aes(x = value, y = medv)) +
+    facet_wrap( ~ key, scales = "free") +
+    geom_jitter(aes(shape = chas), size = 0.5, alpha = 0.25) + 
+    geom_smooth(lwd = 0.5, se = TRUE)
+```
+
+Tinkering to get a jittered plot.
+```{r medv-jitter}
+var_sd <- boston %>%
+  gather('key', 'value', -c(medv, chas)) %>% 
+  group_by(key) %>% 
+  summarize(var_sd = sd(value))
+boston %>%
+  gather('key', 'value', -one_of(c("medv", "chas"))) %>% 
+  left_join(y = var_sd, by = "key") %>% 
+  mutate(jit_val = value + var_sd * runif(nrow(boston), -0.1, 0.1)) %>% 
+  ggplot(aes(x = jit_val, y = medv)) +
+    facet_wrap( ~ key, scales = "free") +
+    geom_jitter(aes(shape = chas), size = 0.5, alpha = 0.25) +
+    geom_smooth(lwd = 0.5, se = TRUE) +
+  ggsave('plots/medv-jitter.pdf')
+```
+
+Covariance plot of variables.
+```{r cov-plot}
+boston %>% 
+  keep(is.numeric) %>% 
+  cor() %>% 
+  as_tibble() %>% 
+  mutate(name = colnames(boston[sapply(boston, is.numeric)])) %>% 
+  gather( , , -one_of("name")) %>% 
+  ggplot(aes(name, key, fill = value)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red",
+                         breaks = seq(-1, 1, , by = 0.2)) +
+    theme(legend.key.height = unit(45, "pt"))
+```
+But a better correlation plot is in a package designed for them.
+```{r using-corrplot}
+library(corrplot)
+boston %>% 
+  keep(is.numeric) %>% 
+  cor() %>%
+  abs() %>% 
+  corrplot(cl.lim = c(0, 1))
+```
+
+Analyze median value and highway access `rad`.
+```{r medv-rad}
+boston %>%
+  ggplot(aes(rad, medv)) +
+  geom_jitter(aes(color = chas), 
+              height = 2, width = NULL, 
+              size = 1, alpha = 0.4) +
+  geom_smooth(aes(color = chas), lwd = 1)
+```
+
+Perhaps `rad = 24` is a missing value.
+```{r list-rad-val}
+boston %>%
+  count(rad)
+```
+```{r explore-rad}
+boston %>%
+  gather( , , -rad) %>% 
+  group_by(key, rad) %>%
+  mutate(value = as.numeric(value)) %>%  # necessary due to factor variable chas
+  summarize(z = round(mean(value), 1)) %>% 
+  spread(rad, z)
+```
+
+Or in helpful boxplot format.
+```{r boxplot-rad}
+boston %>%
+  keep(is.numeric) %>% 
+  gather( , , -rad) %>% 
+  group_by(key, rad) %>%
+  ggplot(aes(x = rad, y = value, group = rad)) + 
+    geom_boxplot(outlier.size = 0.5, varwidth = T) +
+    facet_wrap(~ key, ncol = 3, scales = "free") +
+  ggsave('plots/rad-boxplot.pdf')
+```
+
+Looking at `lstat` relationships.
+```{r violin-lstat}
+boston %>%
+  keep(is.numeric) %>% 
+  gather( , , -lstat) %>% 
+  mutate(lstat_gr = ntile(lstat, 10)) %>% 
+  group_by(key, lstat_gr) %>%
+  ggplot(aes(x = lstat_gr, y = value, group = lstat_gr)) + 
+    geom_violin() +
+    facet_wrap(~ key, ncol = 3, scales = "free") +
+  ggsave('plots/lstat-violin.pdf')
+```
+
+Jittering works well for single plots.
+```{r tax-nox}
+boston %>%
+  ggplot(aes(tax, nox)) +
+    geom_jitter(aes(color = medv, shape = chas), 
+                height = 0.02, width = 10) +
+    scale_color_gradient2(midpoint = 20, 
+                          low = "blue", mid = "gray75", high = "red") +
+    geom_hline(yintercept = 0.6, color = "yellow") +
+    geom_abline(slope = 0.001, intercept = 0.1, color = "blue", lty = "93133313")
+  ggsave('plots/tax-nox.pdf')
+```
+
+## Many plotting options
+Statistics can be added to the plot as an additional layer.
+Other layers are coordinates, facets, and scales.
+```{r price-rooms-2}
+ggplot(data = boston) + 
+  geom_point(mapping = aes(x = rm, y = medv, color = crim), alpha=0.75) +
+  geom_smooth(mapping = aes(x = rm, y = medv)) +
+  coord_cartesian(xlim = c(4.5, 7.5)) +
+  scale_y_log10() +
+  scale_color_gradient(low = "yellow", high = "blue") +
+  labs(x = "average rooms / house", y = "median house price ($K)",
+       title = "Boston median house prices vs. average house size")
+```
+
+Maybe more useful if colored by quantile of `crim` value.
+```{r price-rooms-3}
+boston %>% 
+  mutate(crim = cume_dist(crim)) %>% 
+  ggplot() +
+    geom_point(mapping = aes(x = rm, y = medv, color = crim), alpha=0.75) +
+    geom_smooth(mapping = aes(x = rm, y = medv)) +
+    coord_cartesian(xlim = c(4.5, 7.5)) +
+    scale_y_log10() +
+    scale_color_gradient(low = "yellow", high = "blue") +
+    labs(x = "average rooms / house", y = "median house price ($K)",
+       title = "Boston median house prices, house size, and crime")
+```
+
+Now color by `rad` but change all 24's to NA's.
+```{r price-rad-na}
+boston %>% 
+  mutate(rad = ifelse(rad == 24, NA, rad)) %>% 
+  ggplot() +
+    geom_point(mapping = aes(x = rm, y = medv, color = rad), alpha=0.75) +
+    geom_smooth(mapping = aes(x = rm, y = medv)) +
+    coord_cartesian(xlim = c(4.5, 7.5)) +
+    scale_y_log10() +
+    scale_color_gradient(low = "yellow", high = "red", na.value = "black") +
+    labs(x = "average rooms / house", y = "median house price ($K)",
+         title = "Boston median house prices and access to radial highways")
+```
+
+Maybe excluding newly-NA'ed `rad` values helps the crime plot.
+```{r price-rooms-4}
+boston %>% 
+  filter(!rad == 24) %>% 
+  mutate(crim = cume_dist(crim)) %>% 
+  ggplot() +
+    geom_point(mapping = aes(x = rm, y = medv, color = crim), size = 1) +
+    geom_smooth(mapping = aes(x = rm, y = medv), lwd = 0.5) +
+    scale_y_log10() +
+    scale_color_gradient(low = "yellow", high = "blue") +
+    labs(x = "average rooms / house", y = "median house price ($K)",
+       title = "Boston median house prices, house size, and crime")
+```
+
+A grid of `nox` vs. `dis` plots according to `chas` (rows) and 
+binned level (ntile) of `rad`.
+```{r facet-grid, warning=F}
+boston %>%
+  mutate(rad = ifelse(rad == 24, NA, rad)) %>% 
+  filter(!is.na(rad)) %>% 
+  ggplot(aes(nox, dis, color = medv)) +
+    geom_jitter() +
+    facet_grid(chas ~ ntile(rad, 3)) +
+    geom_smooth()
+```
+
+Multiplots available with `gridExtra`, used by ggplot2.
+```{r multiple-plots}
+require(gridExtra)
+p1 <- ggplot(boston) +
+  geom_point(aes(nox, medv, shape = chas, alpha = cume_dist(lstat)), 
+             color = 'red', size = 2) +
+  labs(title = 'using aes(alpha, shape)')
+p2 <- boston %>%
+  mutate(lstat_gr = ntile(lstat, 3)) %>% 
+  ggplot(aes(tax, medv, color = lstat_gr, size = nox)) + 
+  geom_point(shape = 16, alpha = 0.75) +
+  geom_smooth(aes(group = lstat_gr), lwd = 0.8) +
+  labs(title = 'using aes(group, size)')
+p1
+p2
+ggsave('plots/two-plot.pdf', arrangeGrob(p1, p2))
+```

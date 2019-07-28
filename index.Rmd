@@ -1,5 +1,5 @@
 --- 
-title: "Hitchhiker's Guide to the Tidyverse"
+title: "Hitchhiker's Guide to the Tidyverse (and Statistical Learning in R)"
 author: "Cory Lanker"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -9,47 +9,72 @@ bibliography: [../clanker.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: clanker/tidyverse-class
-description: "A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham's notes from _R for Data Science_"
+description: "A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers"
 ---
 
 # Introduction {-}
 
-<!--
 This bookdown notebook can be cloned via
 ```{bash git-clone, include=TRUE, eval=FALSE}
 git clone git@github.com:clanker/tidyverse-class.git
 ```
-or downloaded as a 
-<zip file>[link](https://github.com/clanker/tidyverse-class/archive/master.zip).
+<!--or downloaded as a 
+#<zip file>[link](https://github.com/clanker/tidyverse-class/archive/master.zip)
 -->
 
-Introducing the tidyverse with two data sets:
+Introducing the tidyverse analyzing these data sets:
 
 1. Basic plots with `tibble` and `ggplot2` using `Boston` house prices.
 1. Preprocessing with `tidyr` and `dplyr` using `Lahman` baseball data.
 
+**Other useful packages**
+
 Though some of these commands will be used, we won't go deeply into
-the following tidyverse packages:
+the following tidyverse packages. These packages
+have an obvious function space, so knowing when to use
+these packages and how to find the appropriate function
+is easier than the packages discussed here.
 
 1. Reading in data with `readr`.
 1. String manipulation with `stringr`.
 1. Dates and times with `lubridate`.
 1. Handling factors with `forcats`.
+1. Apply functions with `purrr`.
+
+Some good ways to learn about these packages:
+
+* `vignette()`, and search for documentation of that package,
+* the cheat sheets for the packages on the RStudio website, or
+* example("function") for helpful guidance on usage.
 
 R proficiency is assumed. These notes aim to bring
-a functional R coder into the tidyverse realm.
+a functional R coder into the tidyverse realm for modern
+data analysis.
 
 ```{r install-package, eval=FALSE}
 # To install the necessary packages in the tidyverse:
 install.packages("tidyverse", dependencies = TRUE)
 ```
 
+**to do list**
+
+1. Add Chapter: computing using `caret`.
+1. Add Chapter: functions provided by `mlr`.
+1. Add Chapter: implementing `keras`.
+1. Add Chapter: tips and tricks for better `R` coding.
+
+
+
 
 ```{r make-r-ref, include=FALSE, eval=FALSE} 
 # only have to eval once
 # automatically create a bib database for R packages
-knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'), 'packages.bib')
+knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown',
+                   'ggplot2', 'dplyr', 'tidyr', 'rlang',
+                   'caret', 'mlr', 'sjmisc'), 'packages.bib')
 ```
 
+Many references are made to Hadley Wickham's book, 
+_R for Data Science_ [@wickham2016r].
 This document is built with R Markdown, **knitr** [@xie2015],
 and the **bookdown** package [@R-bookdown].

@@ -4,27 +4,27 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse</title>
-  <meta name="description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <title>Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</title>
+  <meta name="description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse" />
+  <meta property="og:title" content="Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta property="og:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="github-repo" content="clanker/tidyverse-class" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse" />
+  <meta name="twitter:title" content="Chapter 1 tibbles, ggplot2, and the tidyverse | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   
-  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   
 
 <meta name="author" content="Cory Lanker" />
 
 
-<meta name="date" content="2019-07-22" />
+<meta name="date" content="2019-07-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -113,6 +113,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.1" data-path="ch-dplyr.html"><a href="ch-dplyr.html#hoofin-it-with-dplyr"><i class="fa fa-check"></i><b>2.1</b> Hoofin’ it with dplyr</a></li>
 <li class="chapter" data-level="2.2" data-path="ch-dplyr.html"><a href="ch-dplyr.html#tidyr-and-relational-data"><i class="fa fa-check"></i><b>2.2</b> tidyr and relational data</a></li>
 </ul></li>
+<li class="chapter" data-level="3" data-path="ch-rlang.html"><a href="ch-rlang.html"><i class="fa fa-check"></i><b>3</b> dplyr closures and rlang</a><ul>
+<li class="chapter" data-level="3.1" data-path="ch-rlang.html"><a href="ch-rlang.html#trying-to-understand-the-closure-functions"><i class="fa fa-check"></i><b>3.1</b> Trying to understand the closure functions</a></li>
+<li class="chapter" data-level="3.2" data-path="ch-rlang.html"><a href="ch-rlang.html#tidy-evaluation-with-rlang"><i class="fa fa-check"></i><b>3.2</b> Tidy evaluation with rlang</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ch-caret.html"><a href="ch-caret.html"><i class="fa fa-check"></i><b>4</b> caret Functionality</a></li>
+<li class="chapter" data-level="5" data-path="ch-mlr.html"><a href="ch-mlr.html"><i class="fa fa-check"></i><b>5</b> the Machine Learning with R package</a></li>
+<li class="chapter" data-level="6" data-path="ch-keras.html"><a href="ch-keras.html"><i class="fa fa-check"></i><b>6</b> implementing neural networks in R</a></li>
+<li class="chapter" data-level="7" data-path="ch-tips.html"><a href="ch-tips.html"><i class="fa fa-check"></i><b>7</b> Tips and tricks</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -126,7 +134,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</a>
           </h1>
         </div>
 
@@ -137,12 +145,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="ch:intro" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> tibbles, ggplot2, and the <em>tidyverse</em></h1>
 <p>The tidyverse universe includes:</p>
-<pre><code>## ── Attaching packages ───────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ── Attaching packages ──────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
 <pre><code>## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
 ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
 ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
 ## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ──────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ─────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>In general, the tidyverse is the following:</p>
@@ -212,7 +220,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>lubridate</code> provides date and time control</li>
 <li><code>purrr</code></li>
 </ul>
-<p>The examples I’ll use is the Boston housing database and the Lahman baseball database. By doing analysis on these two data sets, I hope to introduce the power of the tidyverse.</p>
+<p>The examples I’ll use in the next few chapters are the Boston housing database and the Lahman baseball database. By doing analysis on these two data sets, I hope to introduce the power of the tidyverse.</p>
 <div id="tibbles-boston-housing-data" class="section level2">
 <h2><span class="header-section-number">1.1</span> Tibbles: Boston housing data</h2>
 <p>Load, convert, print a tibble.</p>
@@ -310,11 +318,11 @@ boston</code></pre></div>
 <h2><span class="header-section-number">1.2</span> ggplot2 and EDA</h2>
 <p>But we want to know the conditional distributions according to <code>medv</code>. First, showing this with conditional densities.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">one_of</span>(<span class="st">&#39;medv&#39;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span>medv) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">price_gr =</span> <span class="kw">ntile</span>(medv, <span class="dv">4</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(value, <span class="dt">color =</span> price_gr, <span class="dt">group =</span> price_gr)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>key, <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_freqpoly</span>(<span class="dt">bins =</span> <span class="dv">20</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(value, <span class="dt">group =</span> price_gr)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>key, <span class="dt">ncol =</span> <span class="dv">4</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_freqpoly</span>(<span class="kw">aes</span>(<span class="dt">color =</span> price_gr), <span class="dt">bins =</span> <span class="dv">12</span>)</code></pre></div>
 <p><img src="tidyverse-class_files/figure-html/cond-hist-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Click on the expand icon at the top right to make bigger.</span></code></pre></div>
 <p>Appears <code>chas</code> is categorical.</p>
@@ -322,7 +330,7 @@ boston</code></pre></div>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">chas =</span> <span class="kw">factor</span>(chas))</code></pre></div>
 <p>Second, scatterplots of median value vs. all variables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">one_of</span>(<span class="kw">c</span>(<span class="st">&quot;medv&quot;</span>, <span class="st">&quot;chas&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">c</span>(medv, chas)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">y =</span> medv)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">facet_wrap</span>( <span class="op">~</span><span class="st"> </span>key, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">shape =</span> chas), <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">alpha =</span> <span class="fl">0.25</span>) <span class="op">+</span>
@@ -335,7 +343,7 @@ boston</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Click on the expand icon at the top right to make bigger.</span></code></pre></div>
 <p>There are ggplot jitter options, but none worked for me.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">one_of</span>(<span class="kw">c</span>(<span class="st">&quot;medv&quot;</span>, <span class="st">&quot;chas&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">c</span>(medv, chas)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">y =</span> medv)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">facet_wrap</span>( <span class="op">~</span><span class="st"> </span>key, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_jitter</span>(<span class="kw">aes</span>(<span class="dt">shape =</span> chas), <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">alpha =</span> <span class="fl">0.25</span>) <span class="op">+</span><span class="st"> </span>
@@ -344,12 +352,9 @@ boston</code></pre></div>
 <p><img src="tidyverse-class_files/figure-html/medv-jitter-nw-1.png" width="672" /></p>
 <p>Tinkering to get a jittered plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">var_sd &lt;-<span class="st"> </span>boston <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">one_of</span>(<span class="kw">c</span>(<span class="st">&quot;medv&quot;</span>, <span class="st">&quot;chas&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">c</span>(medv, chas)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarize</span>(<span class="dt">var_sd =</span> <span class="kw">sd</span>(value))
-<span class="co">#var_sd &lt;- boston %&gt;% </span>
-<span class="co">#  keep(is.numeric) %&gt;% </span>
-<span class="co">#  summarize_all(sd)</span>
 boston <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">gather</span>(<span class="st">&#39;key&#39;</span>, <span class="st">&#39;value&#39;</span>, <span class="op">-</span><span class="kw">one_of</span>(<span class="kw">c</span>(<span class="st">&quot;medv&quot;</span>, <span class="st">&quot;chas&quot;</span>))) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">left_join</span>(<span class="dt">y =</span> var_sd, <span class="dt">by =</span> <span class="st">&quot;key&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -363,21 +368,27 @@ boston <span class="op">%&gt;%</span>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;
 ## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="tidyverse-class_files/figure-html/medv-jitter-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Click on the expand icon at the top right to make bigger.</span></code></pre></div>
 <p>Covariance plot of variables.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston_num &lt;-<span class="st"> </span>boston <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">keep</span>(is.numeric) 
-boston_num <span class="op">%&gt;%</span><span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">keep</span>(is.numeric) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">cor</span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">name =</span> <span class="kw">colnames</span>(boston_num)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">name =</span> <span class="kw">colnames</span>(boston[<span class="kw">sapply</span>(boston, is.numeric)])) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span><span class="kw">one_of</span>(<span class="st">&quot;name&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(name, key, <span class="dt">fill =</span> value)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_tile</span>() <span class="op">+</span>
 <span class="st">    </span><span class="kw">scale_fill_gradient2</span>(<span class="dt">low =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">mid =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">high =</span> <span class="st">&quot;red&quot;</span>,
                          <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, , <span class="dt">by =</span> <span class="fl">0.2</span>)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.key.height =</span> <span class="kw">unit</span>(<span class="dv">45</span>, <span class="st">&quot;pt&quot;</span>))</code></pre></div>
-<p><img src="tidyverse-class_files/figure-html/cov-plot-1.png" width="672" /></p>
+<p><img src="tidyverse-class_files/figure-html/cov-plot-1.png" width="672" /> But a better correlation plot is in a package designed for them.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(corrplot)</code></pre></div>
+<pre><code>## corrplot 0.84 loaded</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">keep</span>(is.numeric) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">cor</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">abs</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">corrplot</span>(<span class="dt">cl.lim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</code></pre></div>
+<p><img src="tidyverse-class_files/figure-html/using-corrplot-1.png" width="672" /></p>
 <p>Analyze median value and highway access <code>rad</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(rad, medv)) <span class="op">+</span>
@@ -403,7 +414,7 @@ boston_num <span class="op">%&gt;%</span><span class="st"> </span>
 ## 8     8    24
 ## 9    24   132</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span><span class="kw">one_of</span>(<span class="st">&quot;rad&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span>rad) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key, rad) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">as.numeric</span>(value)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># necessary due to factor variable chas</span>
 <span class="st">  </span><span class="kw">summarize</span>(<span class="dt">z =</span> <span class="kw">round</span>(<span class="kw">mean</span>(value), <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -430,7 +441,7 @@ boston_num <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Or in helpful boxplot format.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">keep</span>(is.numeric) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span><span class="kw">one_of</span>(<span class="st">&quot;rad&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span>rad) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key, rad) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> rad, <span class="dt">y =</span> value, <span class="dt">group =</span> rad)) <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">geom_boxplot</span>(<span class="dt">outlier.size =</span> <span class="fl">0.5</span>, <span class="dt">varwidth =</span> T) <span class="op">+</span>
@@ -441,7 +452,7 @@ boston_num <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Looking at <code>lstat</code> relationships.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">keep</span>(is.numeric) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span><span class="kw">one_of</span>(<span class="st">&quot;lstat&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">gather</span>( , , <span class="op">-</span>lstat) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lstat_gr =</span> <span class="kw">ntile</span>(lstat, <span class="dv">10</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(key, lstat_gr) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> lstat_gr, <span class="dt">y =</span> value, <span class="dt">group =</span> lstat_gr)) <span class="op">+</span><span class="st"> </span>
@@ -504,9 +515,8 @@ boston_num <span class="op">%&gt;%</span><span class="st"> </span>
 <p><img src="tidyverse-class_files/figure-html/price-rad-na-1.png" width="672" /></p>
 <p>Maybe excluding newly-NA’ed <code>rad</code> values helps the crime plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boston <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rad =</span> <span class="kw">ifelse</span>(rad <span class="op">==</span><span class="st"> </span><span class="dv">24</span>, <span class="ot">NA</span>, rad)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>rad <span class="op">==</span><span class="st"> </span><span class="dv">24</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">crim =</span> <span class="kw">cume_dist</span>(crim)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(rad)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> rm, <span class="dt">y =</span> medv, <span class="dt">color =</span> crim), <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> rm, <span class="dt">y =</span> medv), <span class="dt">lwd =</span> <span class="fl">0.5</span>) <span class="op">+</span>

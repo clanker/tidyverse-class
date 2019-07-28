@@ -23,7 +23,7 @@
 }{}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Hitchhiker's Guide to the Tidyverse},
+            pdftitle={Hitchhiker's Guide to the Tidyverse (and Statistical Learning in R)},
             pdfauthor={Cory Lanker},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -116,7 +116,7 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{Hitchhiker's Guide to the Tidyverse}
+  \title{Hitchhiker's Guide to the Tidyverse (and Statistical Learning in R)}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
     \author{Cory Lanker}
@@ -124,7 +124,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019-07-22}
+    \date{2019-07-28}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -145,7 +145,15 @@
 \chapter*{Introduction}\label{introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Introducing the tidyverse with two data sets:
+This bookdown notebook can be cloned via
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{git}\NormalTok{ clone git@github.com:clanker/tidyverse-class.git}
+\end{Highlighting}
+\end{Shaded}
+
+Introducing the tidyverse analyzing these data sets:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -158,8 +166,12 @@ Introducing the tidyverse with two data sets:
   \texttt{Lahman} baseball data.
 \end{enumerate}
 
+\textbf{Other useful packages}
+
 Though some of these commands will be used, we won't go deeply into the
-following tidyverse packages:
+following tidyverse packages. These packages have an obvious function
+space, so knowing when to use these packages and how to find the
+appropriate function is easier than the packages discussed here.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -172,10 +184,24 @@ following tidyverse packages:
   Dates and times with \texttt{lubridate}.
 \item
   Handling factors with \texttt{forcats}.
+\item
+  Apply functions with \texttt{purrr}.
 \end{enumerate}
 
+Some good ways to learn about these packages:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{vignette()}, and search for documentation of that package,
+\item
+  the cheat sheets for the packages on the RStudio website, or
+\item
+  example(``function'') for helpful guidance on usage.
+\end{itemize}
+
 R proficiency is assumed. These notes aim to bring a functional R coder
-into the tidyverse realm.
+into the tidyverse realm for modern data analysis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -184,8 +210,25 @@ into the tidyverse realm.
 \end{Highlighting}
 \end{Shaded}
 
-This document is built with R Markdown, \textbf{knitr} \citep{xie2015},
-and the \textbf{bookdown} package \citep{R-bookdown}.
+\textbf{to do list}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Add Chapter: computing using \texttt{caret}.
+\item
+  Add Chapter: functions provided by \texttt{mlr}.
+\item
+  Add Chapter: implementing \texttt{keras}.
+\item
+  Add Chapter: tips and tricks for better \texttt{R} coding.
+\end{enumerate}
+
+Many references are made to Hadley Wickham's book, \emph{R for Data
+Science} \citep{wickham2016r}. This document is built with R Markdown,
+\textbf{knitr} \citep{xie2015}, and the \textbf{bookdown} package
+\citep{R-bookdown}.
 
 \chapter{\texorpdfstring{tibbles, ggplot2, and the
 \emph{tidyverse}}{tibbles, ggplot2, and the tidyverse}}\label{ch:intro}
@@ -346,9 +389,9 @@ In general, the tidyverse is the following:
   \texttt{purrr}
 \end{itemize}
 
-The examples I'll use is the Boston housing database and the Lahman
-baseball database. By doing analysis on these two data sets, I hope to
-introduce the power of the tidyverse.
+The examples I'll use in the next few chapters are the Boston housing
+database and the Lahman baseball database. By doing analysis on these
+two data sets, I hope to introduce the power of the tidyverse.
 
 \section{Tibbles: Boston housing
 data}\label{tibbles-boston-housing-data}
@@ -513,11 +556,11 @@ But we want to know the conditional distributions according to
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\StringTok{'medv'}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\NormalTok{medv) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{price_gr =} \KeywordTok{ntile}\NormalTok{(medv, }\DecValTok{4}\NormalTok{)) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(value, }\DataTypeTok{color =}\NormalTok{ price_gr, }\DataTypeTok{group =}\NormalTok{ price_gr)) }\OperatorTok{+}
-\StringTok{    }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{key, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{) }\OperatorTok{+}
-\StringTok{    }\KeywordTok{geom_freqpoly}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{20}\NormalTok{)}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(value, }\DataTypeTok{group =}\NormalTok{ price_gr)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{key, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_freqpoly}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{color =}\NormalTok{ price_gr), }\DataTypeTok{bins =} \DecValTok{12}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -543,7 +586,7 @@ Second, scatterplots of median value vs.~all variables.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"medv"}\NormalTok{, }\StringTok{"chas"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{c}\NormalTok{(medv, chas)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ value, }\DataTypeTok{y =}\NormalTok{ medv)) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{facet_wrap}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{key, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ chas), }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.25}\NormalTok{) }\OperatorTok{+}
@@ -574,7 +617,7 @@ There are ggplot jitter options, but none worked for me.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"medv"}\NormalTok{, }\StringTok{"chas"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{c}\NormalTok{(medv, chas)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ value, }\DataTypeTok{y =}\NormalTok{ medv)) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{facet_wrap}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{key, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_jitter}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ chas), }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.25}\NormalTok{) }\OperatorTok{+}\StringTok{ }
@@ -593,12 +636,9 @@ Tinkering to get a jittered plot.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{var_sd <-}\StringTok{ }\NormalTok{boston }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"medv"}\NormalTok{, }\StringTok{"chas"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{c}\NormalTok{(medv, chas)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(key) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{var_sd =} \KeywordTok{sd}\NormalTok{(value))}
-\CommentTok{#var_sd <- boston %>% }
-\CommentTok{#  keep(is.numeric) %>% }
-\CommentTok{#  summarize_all(sd)}
 \NormalTok{boston }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{gather}\NormalTok{(}\StringTok{'key'}\NormalTok{, }\StringTok{'value'}\NormalTok{, }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"medv"}\NormalTok{, }\StringTok{"chas"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{left_join}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ var_sd, }\DataTypeTok{by =} \StringTok{"key"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
@@ -622,22 +662,15 @@ Tinkering to get a jittered plot.
 
 \includegraphics{tidyverse-class_files/figure-latex/medv-jitter-1.pdf}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Click on the expand icon at the top right to make bigger.}
-\end{Highlighting}
-\end{Shaded}
-
 Covariance plot of variables.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{boston_num <-}\StringTok{ }\NormalTok{boston }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }
-\NormalTok{boston_num }\OperatorTok{%>%}\StringTok{ }
+\NormalTok{boston }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{cor}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{name =} \KeywordTok{colnames}\NormalTok{(boston_num)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{name =} \KeywordTok{colnames}\NormalTok{(boston[}\KeywordTok{sapply}\NormalTok{(boston, is.numeric)])) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\StringTok{"name"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(name, key, }\DataTypeTok{fill =}\NormalTok{ value)) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_tile}\NormalTok{() }\OperatorTok{+}
@@ -647,7 +680,21 @@ Covariance plot of variables.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{tidyverse-class_files/figure-latex/cov-plot-1.pdf}
+\includegraphics{tidyverse-class_files/figure-latex/cov-plot-1.pdf} But
+a better correlation plot is in a package designed for them.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(corrplot)}
+\NormalTok{boston }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{cor}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{abs}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{corrplot}\NormalTok{(}\DataTypeTok{cl.lim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{tidyverse-class_files/figure-latex/using-corrplot-1.pdf}
 
 Analyze median value and highway access \texttt{rad}.
 
@@ -695,7 +742,7 @@ Perhaps \texttt{rad\ =\ 24} is a missing value.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\StringTok{"rad"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\NormalTok{rad) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(key, rad) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{value =} \KeywordTok{as.numeric}\NormalTok{(value)) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# necessary due to factor variable chas}
 \StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{z =} \KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(value), }\DecValTok{1}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
@@ -734,7 +781,7 @@ Or in helpful boxplot format.
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\StringTok{"rad"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\NormalTok{rad) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(key, rad) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ rad, }\DataTypeTok{y =}\NormalTok{ value, }\DataTypeTok{group =}\NormalTok{ rad)) }\OperatorTok{+}\StringTok{ }
 \StringTok{    }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{outlier.size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{varwidth =}\NormalTok{ T) }\OperatorTok{+}
@@ -755,7 +802,7 @@ Looking at \texttt{lstat} relationships.
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\KeywordTok{one_of}\NormalTok{(}\StringTok{"lstat"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{( , , }\OperatorTok{-}\NormalTok{lstat) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{lstat_gr =} \KeywordTok{ntile}\NormalTok{(lstat, }\DecValTok{10}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(key, lstat_gr) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ lstat_gr, }\DataTypeTok{y =}\NormalTok{ value, }\DataTypeTok{group =}\NormalTok{ lstat_gr)) }\OperatorTok{+}\StringTok{ }
@@ -873,9 +920,8 @@ Maybe excluding newly-NA'ed \texttt{rad} values helps the crime plot.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{boston }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{rad =} \KeywordTok{ifelse}\NormalTok{(rad }\OperatorTok{==}\StringTok{ }\DecValTok{24}\NormalTok{, }\OtherTok{NA}\NormalTok{, rad)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{rad }\OperatorTok{==}\StringTok{ }\DecValTok{24}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{crim =} \KeywordTok{cume_dist}\NormalTok{(crim)) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(rad)) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{mapping =} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ rm, }\DataTypeTok{y =}\NormalTok{ medv, }\DataTypeTok{color =}\NormalTok{ crim), }\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{mapping =} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ rm, }\DataTypeTok{y =}\NormalTok{ medv), }\DataTypeTok{lwd =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
@@ -987,12 +1033,13 @@ Condense batting stats into player career totals, keep only those
 \end{Highlighting}
 \end{Shaded}
 
-All Ha\textasciitilde{} Green\textasciitilde{} statistics:
+All Ha\textasciitilde{} Green\textasciitilde{} statistics to confirm
+that the data reduction looks right:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{batting }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{str_detect}\NormalTok{(playerID, }\StringTok{"greenha"}\NormalTok{))}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{str_detect}\NormalTok{(playerID, }\StringTok{"greenha"}\NormalTok{))  }\CommentTok{# a taste of `stringr`}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1080,22 +1127,41 @@ Attach a column denoting their main fielding position.
 ## [1] 0
 \end{verbatim}
 
-Removing InnOuts is a good idea, too many missing.
+That's odd, just one error NA.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fielding }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(E))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 18
+##   playerID yearID stint teamID lgID  POS       G    GS InnOuts    PO     A
+##   <chr>     <int> <int> <fct>  <fct> <chr> <int> <int>   <int> <int> <int>
+## 1 fordbi01   1936     1 BSN    NL    P         1    NA      NA     0     0
+## # ... with 7 more variables: E <int>, DP <int>, PB <int>, WP <int>,
+## #   SB <int>, CS <int>, ZR <int>
+\end{verbatim}
+
+Removing InnOuts is a good idea, too many missing, and those
+\texttt{NA}s aren't relevant to the analysis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{is_field =}\StringTok{ }\KeywordTok{names}\NormalTok{(fielding)[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{, }\DecValTok{12}\NormalTok{, }\DecValTok{13}\NormalTok{)]}
 \NormalTok{pos_tot <-}\StringTok{ }\NormalTok{fielding }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{select}\NormalTok{(is_field) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID, POS) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(is_field) }\OperatorTok{%>%}\StringTok{   }\CommentTok{# cull columns}
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{  }\CommentTok{# drop the missing value}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID, POS) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# want the most G by POS assigned to playerID}
 \StringTok{  }\KeywordTok{summarize_all}\NormalTok{(sum) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(G }\OperatorTok{>=}\StringTok{ }\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{arrange}\NormalTok{(playerID, }\KeywordTok{desc}\NormalTok{(G)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(G }\OperatorTok{>=}\StringTok{ }\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# only those with 100 G at a POS}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(playerID, }\KeywordTok{desc}\NormalTok{(G)) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# if G instead of desc(G), use last(POS)}
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID) }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pos1 =} \KeywordTok{first}\NormalTok{(POS)) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{filter}\NormalTok{(POS }\OperatorTok{==}\StringTok{ }\NormalTok{pos1) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(POS }\OperatorTok{==}\StringTok{ }\NormalTok{pos1) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# assign position with most games to POS}
 \StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{pos1)}
 \end{Highlighting}
 \end{Shaded}
@@ -1107,13 +1173,13 @@ Add fielding info to batting tibble.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{(batpos <-}\StringTok{ }\NormalTok{gt_}\DecValTok{500} \OperatorTok{%>%}\StringTok{ }
-\StringTok{   }\KeywordTok{left_join}\NormalTok{(pos_tot, }\DataTypeTok{by =} \StringTok{"playerID"}\NormalTok{))}
+\StringTok{   }\KeywordTok{left_join}\NormalTok{(pos_tot, }\DataTypeTok{by =} \StringTok{"playerID"}\NormalTok{, }\DataTypeTok{suffix =} \KeywordTok{c}\NormalTok{(}\StringTok{".h"}\NormalTok{, }\StringTok{".f"}\NormalTok{)))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 2,667 x 19
-##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    playerID   G.h    AB     R     H   X2B   X3B    HR   RBI    SB    CS
 ##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
 ##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
 ##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
@@ -1126,7 +1192,7 @@ Add fielding info to batting tibble.
 ##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
 ## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
 ## # ... with 2,657 more rows, and 8 more variables: BB <int>, SO <int>,
-## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>
+## #   POS <chr>, G.f <int>, PO <int>, A <int>, E <int>, DP <int>
 \end{verbatim}
 
 Counts of positions.
@@ -1181,9 +1247,9 @@ NAs are likely DHs.
 ## 10 moraljo~   1981     1 BAL    AL       38    86     6    21     3     0
 ## # ... with 16 more rows, and 29 more variables: HR.x <int>, RBI.x <int>,
 ## #   SB.x <int>, CS.x <int>, BB.x <int>, SO.x <int>, IBB <int>, HBP <int>,
-## #   SH <int>, SF <int>, GIDP <int>, G.x <int>, AB.y <int>, R.y <int>,
+## #   SH <int>, SF <int>, GIDP <int>, G.h <int>, AB.y <int>, R.y <int>,
 ## #   H.y <int>, X2B.y <int>, X3B.y <int>, HR.y <int>, RBI.y <int>,
-## #   SB.y <int>, CS.y <int>, BB.y <int>, SO.y <int>, POS <chr>, G.y <int>,
+## #   SB.y <int>, CS.y <int>, BB.y <int>, SO.y <int>, POS <chr>, G.f <int>,
 ## #   PO <int>, A <int>, E <int>, DP <int>
 \end{verbatim}
 
@@ -1269,6 +1335,743 @@ neither we can see if they played for the Expos.
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 \end{verbatim}
+
+\chapter{dplyr closures and rlang}\label{ch:rlang}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(gridExtra)}
+\NormalTok{batting <-}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{(Lahman}\OperatorTok{::}\NormalTok{Batting)}
+\NormalTok{fielding <-}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{(Lahman}\OperatorTok{::}\NormalTok{Fielding)}
+
+\NormalTok{is_col <-}\StringTok{ }\KeywordTok{names}\NormalTok{(batting)[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{6}\OperatorTok{:}\DecValTok{17}\NormalTok{)]}
+\NormalTok{is_num <-}\StringTok{ }\KeywordTok{names}\NormalTok{(batting)[}\KeywordTok{sapply}\NormalTok{(batting, is.numeric)]}
+\NormalTok{gt_}\DecValTok{500}\NormalTok{ <-}\StringTok{ }\NormalTok{batting }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(is_col) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{teamID) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(is_col[}\OperatorTok{-}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{)], sum, }\DataTypeTok{na.rm =}\NormalTok{ T) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(G }\OperatorTok{>=}\StringTok{ }\DecValTok{500}\NormalTok{)}
+\NormalTok{is_field =}\StringTok{ }\KeywordTok{names}\NormalTok{(fielding)[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{, }\DecValTok{12}\NormalTok{, }\DecValTok{13}\NormalTok{)]}
+\NormalTok{pos_tot <-}\StringTok{ }\NormalTok{fielding }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(is_field) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID, POS) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize_all}\NormalTok{(sum) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(G }\OperatorTok{>=}\StringTok{ }\DecValTok{100}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(playerID, }\KeywordTok{desc}\NormalTok{(G)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(playerID) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{pos1 =} \KeywordTok{first}\NormalTok{(POS)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(POS }\OperatorTok{==}\StringTok{ }\NormalTok{pos1) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{pos1)}
+\NormalTok{batpos <-}\StringTok{ }\NormalTok{gt_}\DecValTok{500} \OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(pos_tot, }\DataTypeTok{by =} \StringTok{"playerID"}\NormalTok{)}
+\NormalTok{batpos <-}\StringTok{ }\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{()}
+\NormalTok{batpos <-}\StringTok{ }\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{BA =}\NormalTok{ H }\OperatorTok{/}\StringTok{ }\NormalTok{AB) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# batting average, hits / at bats}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Err =}\NormalTok{ E }\OperatorTok{/}\StringTok{ }\NormalTok{(PO }\OperatorTok{+}\StringTok{ }\NormalTok{A)) }\OperatorTok{%>%}\StringTok{   }\CommentTok{# error rate, errors / (put outs + assists)}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{HRR =}\NormalTok{ HR }\OperatorTok{/}\StringTok{ }\NormalTok{AB)  }\CommentTok{# home run rate, home runs / at bats}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Trying to understand the closure
+functions}\label{trying-to-understand-the-closure-functions}
+
+Using \texttt{example("function")} is \emph{very} helpful.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{is_col <-}\StringTok{ }\KeywordTok{names}\NormalTok{(}\KeywordTok{select_if}\NormalTok{(batpos, is.double))}
+\NormalTok{batpos[is_col] <-}\StringTok{ }\NormalTok{batpos[is_col] }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{map}\NormalTok{(round, }\DataTypeTok{digits =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{contains}\NormalTok{(}\StringTok{"B"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 7
+##       AB   X2B   X3B   RBI    SB    BB    BA
+##    <int> <int> <int> <int> <int> <int> <dbl>
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # ... with 2,655 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select_all}\NormalTok{(toupper)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    PLAYERID   G.X    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.Y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   ERR <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\CommentTok{#select_if(function(x) sum(x == 0) > 100, tolower)}
+\StringTok{  }\KeywordTok{select_if}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{sum}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{>}\StringTok{ }\DecValTok{100}\NormalTok{, tolower)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,648 x 8
+##      x2b   x3b    hr   rbi    sb    cs    bb     hrr
+##    <int> <int> <int> <int> <int> <int> <int>   <dbl>
+##  1   624    98   755  2297   240    73  1402 0.0611 
+##  2   109    23    62   242    22    11   133 0.0303 
+##  3     3     0     0     9     0     0     6 0      
+##  4    62    19    32   134    11    18   288 0.0207 
+##  5   574    59   288  1363   400   128  1476 0.034  
+##  6   180    13   146   488     8     3   209 0.0501 
+##  7    94    18    46   216    31    12   194 0.0216 
+##  8   163    19    57   366    29    29   208 0.0142 
+##  9   107    31    25   188    25    30   277 0.00960
+## 10    79     5    34   225     6    10   111 0.021  
+## # ... with 2,638 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{sapply}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{sum}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{>}\StringTok{ }\DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## playerID      G.x       AB        R        H      X2B      X3B       HR 
+##    FALSE    FALSE    FALSE    FALSE    FALSE     TRUE     TRUE     TRUE 
+##      RBI       SB       CS       BB       SO      POS      G.y       PO 
+##     TRUE     TRUE     TRUE     TRUE    FALSE    FALSE    FALSE    FALSE 
+##        A        E       DP       BA      Err      HRR 
+##    FALSE    FALSE    FALSE    FALSE    FALSE     TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{drop_na}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_if}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) }\OperatorTok{!}\StringTok{ }\KeywordTok{sum}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{>}\StringTok{ }\DecValTok{100}\NormalTok{, tolower)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,648 x 22
+##    playerid   g.x    ab     r     h   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,638 more rows, and 11 more variables: BB <int>, so <int>,
+## #   pos <chr>, g.y <int>, po <int>, a <int>, e <int>, dp <int>, ba <dbl>,
+## #   err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select_at}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{12}\NormalTok{, }\DecValTok{14}\NormalTok{), tolower) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{), toupper)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 7
+##      g.x     r   X2B    hr    SB    bb POS  
+##    <int> <int> <int> <int> <int> <int> <chr>
+##  1  3298  2174   624   755   240  1402 OF   
+##  2   702   273   109    62    22   133 SS   
+##  3   681    12     3     0     0     6 P    
+##  4   521   246    62    32    11   288 OF   
+##  5  2425  1453   574   288   400  1476 OF   
+##  6   742   398   180   146     8   209 1B   
+##  7   635   261    94    46    31   194 2B   
+##  8  1165   378   163    57    29   208 2B   
+##  9   797   395   107    25    25   277 3B   
+## 10   661   152    79    34     6   111 OF   
+## # ... with 2,655 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\CommentTok{#  select_all(toupper)}
+\StringTok{  }\KeywordTok{select_all}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\OperatorTok{~}\StringTok{ }\KeywordTok{toupper}\NormalTok{(.)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    PLAYERID   G.X    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.Y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   ERR <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\CommentTok{#  select_all(toupper)}
+\CommentTok{#  select_all(list(~ paste(., "0", sep="")))}
+\StringTok{  }\KeywordTok{select_all}\NormalTok{(}\OperatorTok{~}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\StringTok{"0"}\NormalTok{, }\DataTypeTok{sep=}\StringTok{""}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    playerID0  G.x0   AB0    R0    H0  X2B0  X3B0   HR0  RBI0   SB0   CS0
+##    <chr>     <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha01  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku01   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte02   681   181    12    25     3     0     0     9     0     0
+##  4 abramca01   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo01  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo02   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu01   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje01  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo03   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl01   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: BB0 <int>, SO0 <int>,
+## #   POS0 <chr>, G.y0 <int>, PO0 <int>, A0 <int>, E0 <int>, DP0 <int>,
+## #   BA0 <dbl>, Err0 <dbl>, HRR0 <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\CommentTok{#  select_if(is.numeric, ~ paste(., "new", sep="_"))}
+\StringTok{  }\KeywordTok{mutate_if}\NormalTok{(is.numeric, }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{log}\NormalTok{(x }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+##  1 aaronha~  8.10  9.42  7.68  8.24  6.44  4.60  6.63  7.74  5.48  4.30
+##  2 abbotku~  6.56  7.62  5.61  6.26  4.70  3.18  4.14  5.49  3.14  2.48
+##  3 abernte~  6.53  5.20  2.56  3.26  1.39  0     0     2.30  0     0   
+##  4 abramca~  6.26  7.34  5.51  6.05  4.14  3.00  3.50  4.91  2.48  2.94
+##  5 abreubo~  7.79  9.05  7.28  7.81  6.35  4.09  5.67  7.22  5.99  4.86
+##  6 abreujo~  6.61  7.98  5.99  6.76  5.20  2.64  4.99  6.19  2.20  1.39
+##  7 ackledu~  6.46  7.66  5.57  6.24  4.55  2.94  3.85  5.38  3.47  2.56
+##  8 adairje~  7.06  8.30  5.94  6.93  5.10  3.00  4.06  5.91  3.40  3.40
+##  9 adamsbo~  6.68  7.87  5.98  6.55  4.68  3.47  3.26  5.24  3.26  3.43
+## 10 adamsgl~  6.50  7.39  5.03  6.12  4.38  1.79  3.56  5.42  1.95  2.40
+## # ... with 2,655 more rows, and 11 more variables: BB <dbl>, SO <dbl>,
+## #   POS <chr>, G.y <dbl>, PO <dbl>, A <dbl>, E <dbl>, DP <dbl>, BA <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_if}\NormalTok{(is.numeric, }\OperatorTok{~}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\StringTok{"N"}\NormalTok{, }\DataTypeTok{sep=}\StringTok{""}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    playerID  G.xN   ABN    RN    HN  X2BN  X3BN   HRN  RBIN   SBN   CSN
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: BBN <int>, SON <int>,
+## #   POS <chr>, G.yN <int>, PON <int>, AN <int>, EN <int>, DPN <int>,
+## #   BAN <dbl>, ErrN <dbl>, HRRN <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{contains}\NormalTok{(}\StringTok{"B"}\NormalTok{)), }\OperatorTok{~}\StringTok{ }\KeywordTok{tolower}\NormalTok{(.))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    playerID   G.x    ab     R     H   x2b   x3b    HR   rbi    sb    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: bb <int>, SO <int>,
+## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>, ba <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{contains}\NormalTok{(}\StringTok{"B"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_all}\NormalTok{(}\OperatorTok{~}\StringTok{ }\KeywordTok{tolower}\NormalTok{(.))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 7
+##       ab   x2b   x3b   rbi    sb    bb    ba
+##    <int> <int> <int> <int> <int> <int> <dbl>
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # ... with 2,655 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# or}
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{contains}\NormalTok{(}\StringTok{"B"}\NormalTok{)), }\OperatorTok{~}\StringTok{ }\KeywordTok{tolower}\NormalTok{(.))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 7
+##       ab   x2b   x3b   rbi    sb    bb    ba
+##    <int> <int> <int> <int> <int> <int> <dbl>
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # ... with 2,655 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{keep}\NormalTok{(is.numeric) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_all}\NormalTok{(}\KeywordTok{all_vars}\NormalTok{(. }\OperatorTok{<}\StringTok{ }\DecValTok{1000}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 316 x 20
+##      G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS    BB    SO
+##    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1   681   181    12    25     3     0     0     9     0     0     6    74
+##  2   574    78     2     4     1     0     0     2     0     0     7    41
+##  3   774    17     0     3     0     0     0     2     0     0     2     6
+##  4   543    20     0     2     0     0     0     0     0     0     1     7
+##  5   737   139    12    28     3     0     3    11     0     0     6    37
+##  6   549    35     1     3     1     0     0     0     0     0     0    21
+##  7   562   265    19    44     8     0     0    17     0     0     9    77
+##  8   592    14     0     2     0     0     0     2     0     0     0     8
+##  9   699    38     4     5     0     0     0     0     0     0     3    15
+## 10   884    36     3     3     1     0     0     0     0     0     5    12
+## # ... with 306 more rows, and 8 more variables: G.y <int>, PO <int>,
+## #   A <int>, E <int>, DP <int>, BA <dbl>, Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_all}\NormalTok{(}\KeywordTok{any_vars}\NormalTok{(. }\OperatorTok{>}\StringTok{ }\DecValTok{10000}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 aaronha~  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku~   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte~   681   181    12    25     3     0     0     9     0     0
+##  4 abramca~   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo~  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo~   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu~   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje~  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo~   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl~   661  1617   152   452    79     5    34   225     6    10
+## # ... with 2,655 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_if}\NormalTok{(is.numeric, }\KeywordTok{all_vars}\NormalTok{(. }\OperatorTok{<}\StringTok{ }\DecValTok{600}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 121 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 adamste~   574    78     2     4     1     0     0     2     0     0
+##  2 agostju~   543    20     0     2     0     0     0     0     0     0
+##  3 alberma~   549    35     1     3     1     0     0     0     0     0
+##  4 alexado~   562   265    19    44     8     0     0    17     0     0
+##  5 alfonan~   592    14     0     2     0     0     0     2     0     0
+##  6 axforjo~   543     1     0     0     0     0     0     0     0     0
+##  7 ayalalu~   534    14     0     4     1     0     0     0     0     0
+##  8 baezda01   533     6     1     1     0     0     0     0     0     0
+##  9 bahnsst~   575   479    22    56     8     2     1    19     0     0
+## 10 bairdo01   584    52     2     5     1     0     1     4     0     0
+## # ... with 111 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select_at}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2,665 x 7
+##        R     H   X2B   X3B    HR   RBI    SB
+##    <int> <int> <int> <int> <int> <int> <int>
+##  1  2174  3771   624    98   755  2297   240
+##  2   273   523   109    23    62   242    22
+##  3    12    25     3     0     0     9     0
+##  4   246   422    62    19    32   134    11
+##  5  1453  2470   574    59   288  1363   400
+##  6   398   858   180    13   146   488     8
+##  7   261   512    94    18    46   216    31
+##  8   378  1022   163    19    57   366    29
+##  9   395   701   107    31    25   188    25
+## 10   152   452    79     5    34   225     6
+## # ... with 2,655 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_at}\NormalTok{(}\DecValTok{4}\OperatorTok{:}\DecValTok{6}\NormalTok{, }\KeywordTok{all_vars}\NormalTok{((. }\OperatorTok{%%}\StringTok{ }\DecValTok{10}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 22
+##   playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##   <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+## 1 freemfr~  1188  4356   685  1275   285    20   189   684    37    18
+## 2 wrighta~  1029  3583   465  1115   175    55    38   553    32    33
+## 3 wynnji01  1920  6653  1105  1665   285    39   291   964   225   101
+## # ... with 11 more variables: BB <int>, SO <int>, POS <chr>, G.y <int>,
+## #   PO <int>, A <int>, E <int>, DP <int>, BA <dbl>, Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"X"}\NormalTok{)), }\KeywordTok{any_vars}\NormalTok{((. }\OperatorTok{%%}\StringTok{ }\DecValTok{50}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{0} \OperatorTok{&}\StringTok{ }\NormalTok{. }\OperatorTok{>}\StringTok{ }\DecValTok{0}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 74 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 alexama~   594  1271   166   293    50    12    15   115    37    10
+##  2 alouma01  1667  5789   780  1777   236    50    31   427   156    80
+##  3 batteea~  1141  3586   393   969   150    17   104   449    13    12
+##  4 beckeri~   789  2227   345   570   100    12    45   243    66    26
+##  5 bergmda~  1349  2679   312   690   100    16    54   289    19    14
+##  6 berryke~  1383  4136   422  1053   150    23    58   343    45    46
+##  7 bigbeca~   712  2703   443   826   100    55    12   250   103    68
+##  8 bochtbr~  1538  5233   643  1478   250    21   100   658    43    41
+##  9 bosleth~   784  1581   183   430    50    12    20   158    47    24
+## 10 boyercl~  1725  5780   645  1396   200    33   162   654    41    28
+## # ... with 64 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{is_whole <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) }\ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.numeric}\NormalTok{(x)) }\KeywordTok{all}\NormalTok{(}\KeywordTok{floor}\NormalTok{(x) }\OperatorTok{==}\StringTok{ }\NormalTok{x) }\ControlFlowTok{else} \OtherTok{FALSE}
+\CommentTok{#batpos %>% }
+\CommentTok{#  keep(is_whole) %>% }
+\CommentTok{#  filter_if(~ all(floor(.) == .), any_vars((. %% 100) == 50))}
+\NormalTok{batpos }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter_if}\NormalTok{(is_whole, }\KeywordTok{any_vars}\NormalTok{((. }\OperatorTok{%%}\StringTok{ }\DecValTok{100}\NormalTok{) }\OperatorTok{==}\StringTok{ }\DecValTok{50}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 380 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    <chr>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
+##  1 adamsma~   707  2026   248   539   113     6    96   332     4     4
+##  2 alexada~   662  2450   369   811   164    30    61   459    20    28
+##  3 alexama~   594  1271   166   293    50    12    15   115    37    10
+##  4 alicelu~  1341  3971   551  1031   189    53    47   422    81    50
+##  5 allisbo~  1541  5032   811  1281   216    53   256   796    84    50
+##  6 almonbi~  1236  3330   390   846   138    25    36   296   128    60
+##  7 alouje01  1380  4345   448  1216   170    26    32   377    31    46
+##  8 alouma01  1667  5789   780  1777   236    50    31   427   156    80
+##  9 amarial~   702  1750   171   404    67    16    21   169    39    10
+## 10 aurilri~  1652  5721   745  1576   301    22   186   756    23    18
+## # ... with 370 more rows, and 11 more variables: BB <int>, SO <int>,
+## #   POS <chr>, G.y <int>, PO <int>, A <int>, E <int>, DP <int>, BA <dbl>,
+## #   Err <dbl>, HRR <dbl>
+\end{verbatim}
+
+\section{Tidy evaluation with rlang}\label{tidy-evaluation-with-rlang}
+
+Symbols:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(rlang)}
+\KeywordTok{cat}\NormalTok{(pi, }\KeywordTok{expr}\NormalTok{(pi), }\KeywordTok{eval}\NormalTok{(}\KeywordTok{expr}\NormalTok{(pi)), }\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 3.141593 pi 3.141593
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cat}\NormalTok{(}\KeywordTok{is_symbol}\NormalTok{(pi), }\KeywordTok{is_symbol}\NormalTok{(}\KeywordTok{expr}\NormalTok{(pi)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## FALSE TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{print_types <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+  \KeywordTok{print}\NormalTok{(x)}
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{eval}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{'  Symbol:'}\NormalTok{, }\KeywordTok{is_symbol}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{' Environment:'}\NormalTok{, }\KeywordTok{is_environment}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{' Constant:'}\NormalTok{, }\KeywordTok{is_bare_atomic}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{  Call object:'}\NormalTok{, }\KeywordTok{is_call}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{' Expression:'}\NormalTok{, }\KeywordTok{is_expression}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{' Quosure:'}\NormalTok{, }\KeywordTok{is_quosure}\NormalTok{(x))}
+  \KeywordTok{cat}\NormalTok{(}\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{a <-}\StringTok{ }\DecValTok{1}
+\NormalTok{b <-}\StringTok{ }\DecValTok{2}
+\KeywordTok{sapply}\NormalTok{(}\KeywordTok{c}\NormalTok{(pi, }\DecValTok{1}\NormalTok{, }\KeywordTok{abs}\NormalTok{(}\DecValTok{1}\NormalTok{), pi, }\KeywordTok{expr}\NormalTok{(pi), }\KeywordTok{expr}\NormalTok{(a}\OperatorTok{+}\NormalTok{b), }\KeywordTok{quo}\NormalTok{(a}\OperatorTok{+}\NormalTok{b)),}
+\NormalTok{       print_types)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.141593
+## [1] 3.141593
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 1
+## [1] 1
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 1
+## [1] 1
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 3.141593
+## [1] 3.141593
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## pi
+## [1] 3.141593
+##   Symbol: TRUE Environment: FALSE Constant: FALSE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## a + b
+## [1] 3
+##   Symbol: FALSE Environment: FALSE Constant: FALSE
+##   Call object: TRUE Expression: TRUE Quosure: FALSE
+## <quosure>
+## expr: ^a + b
+## env:  global
+## <quosure>
+## expr: ^a + b
+## env:  global
+##   Symbol: FALSE Environment: FALSE Constant: FALSE
+##   Call object: TRUE Expression: TRUE Quosure: TRUE
+\end{verbatim}
+
+\begin{verbatim}
+## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL
+## 
+## [[3]]
+## NULL
+## 
+## [[4]]
+## NULL
+## 
+## [[5]]
+## NULL
+## 
+## [[6]]
+## NULL
+## 
+## [[7]]
+## NULL
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{quos}\NormalTok{(a}\OperatorTok{+}\NormalTok{b, a}\OperatorTok{-}\NormalTok{b)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## <list_of<quosure>>
+## 
+## [[1]]
+## <quosure>
+## expr: ^a + b
+## env:  global
+## 
+## [[2]]
+## <quosure>
+## expr: ^a - b
+## env:  global
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{quote_this <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{enquo}\NormalTok{(x)}
+\NormalTok{quote_these <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(...) }\KeywordTok{enquos}\NormalTok{(...)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# quosures allow code to be written from string variables}
+\CommentTok{# and vice versa}
+\KeywordTok{print}\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{eval}\NormalTok{(}\KeywordTok{parse_expr}\NormalTok{(}\StringTok{"a + b"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{expr_text}\NormalTok{(}\ControlFlowTok{function}\NormalTok{(x) x}\OperatorTok{^}\DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "function (x) \nx^2"
+\end{verbatim}
+
+\chapter{caret Functionality}\label{ch:caret}
+
+Using \emph{Applied Predictive Modeling} \citep{kuhn2013applied}.
+
+\chapter{the Machine Learning with R package}\label{ch:mlr}
+
+Using \texttt{mlr} \citep{mlr}.
+
+\emph{more to come}
+
+\chapter{implementing neural networks in R}\label{ch:keras}
+
+Using \texttt{keras}.
+
+\emph{more to come}
+
+\chapter{Tips and tricks}\label{ch:tips}
+
+\emph{more to come}
 
 \bibliography{../clanker.bib,packages.bib}
 

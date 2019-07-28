@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 dplyr closures and rlang | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</title>
+  <meta name="description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 dplyr closures and rlang | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
+  <meta name="github-repo" content="clanker/tidyverse-class" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 dplyr closures and rlang | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
+  
+  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
+  
+
+<meta name="author" content="Cory Lanker" />
+
+
+<meta name="date" content="2019-07-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="ch-dplyr.html">
+<link rel="next" href="ch-caret.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Intro to the tidyverse</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introduction</a></li>
+<li class="chapter" data-level="1" data-path="ch-intro.html"><a href="ch-intro.html"><i class="fa fa-check"></i><b>1</b> tibbles, ggplot2, and the <em>tidyverse</em></a><ul>
+<li class="chapter" data-level="1.1" data-path="ch-intro.html"><a href="ch-intro.html#tibbles-boston-housing-data"><i class="fa fa-check"></i><b>1.1</b> Tibbles: Boston housing data</a></li>
+<li class="chapter" data-level="1.2" data-path="ch-intro.html"><a href="ch-intro.html#ggplot2-and-eda"><i class="fa fa-check"></i><b>1.2</b> ggplot2 and EDA</a></li>
+<li class="chapter" data-level="1.3" data-path="ch-intro.html"><a href="ch-intro.html#many-plotting-options"><i class="fa fa-check"></i><b>1.3</b> Many plotting options</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="ch-dplyr.html"><a href="ch-dplyr.html"><i class="fa fa-check"></i><b>2</b> dplyr and tidyr</a><ul>
+<li class="chapter" data-level="2.1" data-path="ch-dplyr.html"><a href="ch-dplyr.html#hoofin-it-with-dplyr"><i class="fa fa-check"></i><b>2.1</b> Hoofin’ it with dplyr</a></li>
+<li class="chapter" data-level="2.2" data-path="ch-dplyr.html"><a href="ch-dplyr.html#tidyr-and-relational-data"><i class="fa fa-check"></i><b>2.2</b> tidyr and relational data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="ch-rlang.html"><a href="ch-rlang.html"><i class="fa fa-check"></i><b>3</b> dplyr closures and rlang</a><ul>
+<li class="chapter" data-level="3.1" data-path="ch-rlang.html"><a href="ch-rlang.html#trying-to-understand-the-closure-functions"><i class="fa fa-check"></i><b>3.1</b> Trying to understand the closure functions</a></li>
+<li class="chapter" data-level="3.2" data-path="ch-rlang.html"><a href="ch-rlang.html#tidy-evaluation-with-rlang"><i class="fa fa-check"></i><b>3.2</b> Tidy evaluation with rlang</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ch-caret.html"><a href="ch-caret.html"><i class="fa fa-check"></i><b>4</b> caret Functionality</a></li>
+<li class="chapter" data-level="5" data-path="ch-mlr.html"><a href="ch-mlr.html"><i class="fa fa-check"></i><b>5</b> the Machine Learning with R package</a></li>
+<li class="chapter" data-level="6" data-path="ch-keras.html"><a href="ch-keras.html"><i class="fa fa-check"></i><b>6</b> implementing neural networks in R</a></li>
+<li class="chapter" data-level="7" data-path="ch-tips.html"><a href="ch-tips.html"><i class="fa fa-check"></i><b>7</b> Tips and tricks</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="ch:rlang" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> dplyr closures and rlang</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(gridExtra)
+batting &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(Lahman<span class="op">::</span>Batting)
+fielding &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(Lahman<span class="op">::</span>Fielding)
+
+is_col &lt;-<span class="st"> </span><span class="kw">names</span>(batting)[<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span><span class="op">:</span><span class="dv">17</span>)]
+is_num &lt;-<span class="st"> </span><span class="kw">names</span>(batting)[<span class="kw">sapply</span>(batting, is.numeric)]
+gt_<span class="dv">500</span> &lt;-<span class="st"> </span>batting <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(is_col) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>teamID) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(playerID) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarize_at</span>(is_col[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)], sum, <span class="dt">na.rm =</span> T) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(G <span class="op">&gt;=</span><span class="st"> </span><span class="dv">500</span>)
+is_field =<span class="st"> </span><span class="kw">names</span>(fielding)[<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>)]
+pos_tot &lt;-<span class="st"> </span>fielding <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(is_field) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(playerID, POS) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarize_all</span>(sum) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(G <span class="op">&gt;=</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">arrange</span>(playerID, <span class="kw">desc</span>(G)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(playerID) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pos1 =</span> <span class="kw">first</span>(POS)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(POS <span class="op">==</span><span class="st"> </span>pos1) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>pos1)
+batpos &lt;-<span class="st"> </span>gt_<span class="dv">500</span> <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">left_join</span>(pos_tot, <span class="dt">by =</span> <span class="st">&quot;playerID&quot;</span>)
+batpos &lt;-<span class="st"> </span>batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>()
+batpos &lt;-<span class="st"> </span>batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">BA =</span> H <span class="op">/</span><span class="st"> </span>AB) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># batting average, hits / at bats</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Err =</span> E <span class="op">/</span><span class="st"> </span>(PO <span class="op">+</span><span class="st"> </span>A)) <span class="op">%&gt;%</span><span class="st">   </span><span class="co"># error rate, errors / (put outs + assists)</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">HRR =</span> HR <span class="op">/</span><span class="st"> </span>AB)  <span class="co"># home run rate, home runs / at bats</span></code></pre></div>
+<div id="trying-to-understand-the-closure-functions" class="section level2">
+<h2><span class="header-section-number">3.1</span> Trying to understand the closure functions</h2>
+<p>Using <code>example(&quot;function&quot;)</code> is <em>very</em> helpful.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">is_col &lt;-<span class="st"> </span><span class="kw">names</span>(<span class="kw">select_if</span>(batpos, is.double))
+batpos[is_col] &lt;-<span class="st"> </span>batpos[is_col] <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">map</span>(round, <span class="dt">digits =</span> <span class="dv">4</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="kw">contains</span>(<span class="st">&quot;B&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 7
+##       AB   X2B   X3B   RBI    SB    BB    BA
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # … with 2,655 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select_all</span>(toupper)</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    PLAYERID   G.X    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.Y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   ERR &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co">#select_if(function(x) sum(x == 0) &gt; 100, tolower)</span>
+<span class="st">  </span><span class="kw">select_if</span>(<span class="cf">function</span>(x) <span class="kw">sum</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>, tolower)</code></pre></div>
+<pre><code>## # A tibble: 2,648 x 8
+##      x2b   x3b    hr   rbi    sb    cs    bb     hrr
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1   624    98   755  2297   240    73  1402 0.0611 
+##  2   109    23    62   242    22    11   133 0.0303 
+##  3     3     0     0     9     0     0     6 0      
+##  4    62    19    32   134    11    18   288 0.0207 
+##  5   574    59   288  1363   400   128  1476 0.034  
+##  6   180    13   146   488     8     3   209 0.0501 
+##  7    94    18    46   216    31    12   194 0.0216 
+##  8   163    19    57   366    29    29   208 0.0142 
+##  9   107    31    25   188    25    30   277 0.00960
+## 10    79     5    34   225     6    10   111 0.021  
+## # … with 2,638 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">sapply</span>(<span class="cf">function</span>(x) <span class="kw">sum</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>)</code></pre></div>
+<pre><code>## playerID      G.x       AB        R        H      X2B      X3B       HR 
+##    FALSE    FALSE    FALSE    FALSE    FALSE     TRUE     TRUE     TRUE 
+##      RBI       SB       CS       BB       SO      POS      G.y       PO 
+##     TRUE     TRUE     TRUE     TRUE    FALSE    FALSE    FALSE    FALSE 
+##        A        E       DP       BA      Err      HRR 
+##    FALSE    FALSE    FALSE    FALSE    FALSE     TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename_if</span>(<span class="cf">function</span>(x) <span class="op">!</span><span class="st"> </span><span class="kw">sum</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>, tolower)</code></pre></div>
+<pre><code>## # A tibble: 2,648 x 22
+##    playerid   g.x    ab     r     h   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,638 more rows, and 11 more variables: BB &lt;int&gt;, so &lt;int&gt;,
+## #   pos &lt;chr&gt;, g.y &lt;int&gt;, po &lt;int&gt;, a &lt;int&gt;, e &lt;int&gt;, dp &lt;int&gt;, ba &lt;dbl&gt;,
+## #   err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select_at</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">14</span>), tolower) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename_at</span>(<span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>), toupper)</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 7
+##      g.x     r   X2B    hr    SB    bb POS  
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;
+##  1  3298  2174   624   755   240  1402 OF   
+##  2   702   273   109    62    22   133 SS   
+##  3   681    12     3     0     0     6 P    
+##  4   521   246    62    32    11   288 OF   
+##  5  2425  1453   574   288   400  1476 OF   
+##  6   742   398   180   146     8   209 1B   
+##  7   635   261    94    46    31   194 2B   
+##  8  1165   378   163    57    29   208 2B   
+##  9   797   395   107    25    25   277 3B   
+## 10   661   152    79    34     6   111 OF   
+## # … with 2,655 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="co">#  select_all(toupper)</span>
+<span class="st">  </span><span class="kw">select_all</span>(<span class="kw">list</span>(<span class="op">~</span><span class="st"> </span><span class="kw">toupper</span>(.)))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    PLAYERID   G.X    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.Y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   ERR &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="co">#  select_all(toupper)</span>
+<span class="co">#  select_all(list(~ paste(., &quot;0&quot;, sep=&quot;&quot;)))</span>
+<span class="st">  </span><span class="kw">select_all</span>(<span class="op">~</span><span class="st"> </span><span class="kw">paste</span>(., <span class="st">&quot;0&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    playerID0  G.x0   AB0    R0    H0  X2B0  X3B0   HR0  RBI0   SB0   CS0
+##    &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha01  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku01   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte02   681   181    12    25     3     0     0     9     0     0
+##  4 abramca01   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo01  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo02   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu01   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje01  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo03   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl01   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: BB0 &lt;int&gt;, SO0 &lt;int&gt;,
+## #   POS0 &lt;chr&gt;, G.y0 &lt;int&gt;, PO0 &lt;int&gt;, A0 &lt;int&gt;, E0 &lt;int&gt;, DP0 &lt;int&gt;,
+## #   BA0 &lt;dbl&gt;, Err0 &lt;dbl&gt;, HRR0 &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="co">#  select_if(is.numeric, ~ paste(., &quot;new&quot;, sep=&quot;_&quot;))</span>
+<span class="st">  </span><span class="kw">mutate_if</span>(is.numeric, <span class="cf">function</span>(x) <span class="kw">log</span>(x <span class="op">+</span><span class="st"> </span><span class="dv">1</span>))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 aaronha…  8.10  9.42  7.68  8.24  6.44  4.60  6.63  7.74  5.48  4.30
+##  2 abbotku…  6.56  7.62  5.61  6.26  4.70  3.18  4.14  5.49  3.14  2.48
+##  3 abernte…  6.53  5.20  2.56  3.26  1.39  0     0     2.30  0     0   
+##  4 abramca…  6.26  7.34  5.51  6.05  4.14  3.00  3.50  4.91  2.48  2.94
+##  5 abreubo…  7.79  9.05  7.28  7.81  6.35  4.09  5.67  7.22  5.99  4.86
+##  6 abreujo…  6.61  7.98  5.99  6.76  5.20  2.64  4.99  6.19  2.20  1.39
+##  7 ackledu…  6.46  7.66  5.57  6.24  4.55  2.94  3.85  5.38  3.47  2.56
+##  8 adairje…  7.06  8.30  5.94  6.93  5.10  3.00  4.06  5.91  3.40  3.40
+##  9 adamsbo…  6.68  7.87  5.98  6.55  4.68  3.47  3.26  5.24  3.26  3.43
+## 10 adamsgl…  6.50  7.39  5.03  6.12  4.38  1.79  3.56  5.42  1.95  2.40
+## # … with 2,655 more rows, and 11 more variables: BB &lt;dbl&gt;, SO &lt;dbl&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;dbl&gt;, PO &lt;dbl&gt;, A &lt;dbl&gt;, E &lt;dbl&gt;, DP &lt;dbl&gt;, BA &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename_if</span>(is.numeric, <span class="op">~</span><span class="st"> </span><span class="kw">paste</span>(., <span class="st">&quot;N&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    playerID  G.xN   ABN    RN    HN  X2BN  X3BN   HRN  RBIN   SBN   CSN
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: BBN &lt;int&gt;, SON &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.yN &lt;int&gt;, PON &lt;int&gt;, AN &lt;int&gt;, EN &lt;int&gt;, DPN &lt;int&gt;,
+## #   BAN &lt;dbl&gt;, ErrN &lt;dbl&gt;, HRRN &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename_at</span>(<span class="kw">vars</span>(<span class="kw">contains</span>(<span class="st">&quot;B&quot;</span>)), <span class="op">~</span><span class="st"> </span><span class="kw">tolower</span>(.))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    playerID   G.x    ab     R     H   x2b   x3b    HR   rbi    sb    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: bb &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, ba &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="kw">contains</span>(<span class="st">&quot;B&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename_all</span>(<span class="op">~</span><span class="st"> </span><span class="kw">tolower</span>(.))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 7
+##       ab   x2b   x3b   rbi    sb    bb    ba
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # … with 2,655 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># or</span>
+batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select_at</span>(<span class="kw">vars</span>(<span class="kw">contains</span>(<span class="st">&quot;B&quot;</span>)), <span class="op">~</span><span class="st"> </span><span class="kw">tolower</span>(.))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 7
+##       ab   x2b   x3b   rbi    sb    bb    ba
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+##  1 12364   624    98  2297   240  1402 0.305
+##  2  2044   109    23   242    22   133 0.256
+##  3   181     3     0     9     0     6 0.138
+##  4  1543    62    19   134    11   288 0.274
+##  5  8480   574    59  1363   400  1476 0.291
+##  6  2913   180    13   488     8   209 0.294
+##  7  2125    94    18   216    31   194 0.241
+##  8  4019   163    19   366    29   208 0.254
+##  9  2604   107    31   188    25   277 0.269
+## 10  1617    79     5   225     6   111 0.280
+## # … with 2,655 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">keep</span>(is.numeric) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_all</span>(<span class="kw">all_vars</span>(. <span class="op">&lt;</span><span class="st"> </span><span class="dv">1000</span>))</code></pre></div>
+<pre><code>## # A tibble: 316 x 20
+##      G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS    BB    SO
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1   681   181    12    25     3     0     0     9     0     0     6    74
+##  2   574    78     2     4     1     0     0     2     0     0     7    41
+##  3   774    17     0     3     0     0     0     2     0     0     2     6
+##  4   543    20     0     2     0     0     0     0     0     0     1     7
+##  5   737   139    12    28     3     0     3    11     0     0     6    37
+##  6   549    35     1     3     1     0     0     0     0     0     0    21
+##  7   562   265    19    44     8     0     0    17     0     0     9    77
+##  8   592    14     0     2     0     0     0     2     0     0     0     8
+##  9   699    38     4     5     0     0     0     0     0     0     3    15
+## 10   884    36     3     3     1     0     0     0     0     0     5    12
+## # … with 306 more rows, and 8 more variables: G.y &lt;int&gt;, PO &lt;int&gt;,
+## #   A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;, Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_all</span>(<span class="kw">any_vars</span>(. <span class="op">&gt;</span><span class="st"> </span><span class="dv">10000</span>))</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
+##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
+##  3 abernte…   681   181    12    25     3     0     0     9     0     0
+##  4 abramca…   521  1543   246   422    62    19    32   134    11    18
+##  5 abreubo…  2425  8480  1453  2470   574    59   288  1363   400   128
+##  6 abreujo…   742  2913   398   858   180    13   146   488     8     3
+##  7 ackledu…   635  2125   261   512    94    18    46   216    31    12
+##  8 adairje…  1165  4019   378  1022   163    19    57   366    29    29
+##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
+## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
+## # … with 2,655 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_if</span>(is.numeric, <span class="kw">all_vars</span>(. <span class="op">&lt;</span><span class="st"> </span><span class="dv">600</span>))</code></pre></div>
+<pre><code>## # A tibble: 121 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 adamste…   574    78     2     4     1     0     0     2     0     0
+##  2 agostju…   543    20     0     2     0     0     0     0     0     0
+##  3 alberma…   549    35     1     3     1     0     0     0     0     0
+##  4 alexado…   562   265    19    44     8     0     0    17     0     0
+##  5 alfonan…   592    14     0     2     0     0     0     2     0     0
+##  6 axforjo…   543     1     0     0     0     0     0     0     0     0
+##  7 ayalalu…   534    14     0     4     1     0     0     0     0     0
+##  8 baezda01   533     6     1     1     0     0     0     0     0     0
+##  9 bahnsst…   575   479    22    56     8     2     1    19     0     0
+## 10 bairdo01   584    52     2     5     1     0     1     4     0     0
+## # … with 111 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select_at</span>(<span class="dv">4</span><span class="op">:</span><span class="dv">10</span>)</code></pre></div>
+<pre><code>## # A tibble: 2,665 x 7
+##        R     H   X2B   X3B    HR   RBI    SB
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1  2174  3771   624    98   755  2297   240
+##  2   273   523   109    23    62   242    22
+##  3    12    25     3     0     0     9     0
+##  4   246   422    62    19    32   134    11
+##  5  1453  2470   574    59   288  1363   400
+##  6   398   858   180    13   146   488     8
+##  7   261   512    94    18    46   216    31
+##  8   378  1022   163    19    57   366    29
+##  9   395   701   107    31    25   188    25
+## 10   152   452    79     5    34   225     6
+## # … with 2,655 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_at</span>(<span class="dv">4</span><span class="op">:</span><span class="dv">6</span>, <span class="kw">all_vars</span>((. <span class="op">%%</span><span class="st"> </span><span class="dv">10</span>) <span class="op">==</span><span class="st"> </span><span class="dv">5</span>))</code></pre></div>
+<pre><code>## # A tibble: 3 x 22
+##   playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##   &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 freemfr…  1188  4356   685  1275   285    20   189   684    37    18
+## 2 wrighta…  1029  3583   465  1115   175    55    38   553    32    33
+## 3 wynnji01  1920  6653  1105  1665   285    39   291   964   225   101
+## # … with 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;, POS &lt;chr&gt;, G.y &lt;int&gt;,
+## #   PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;, Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_at</span>(<span class="kw">vars</span>(<span class="kw">starts_with</span>(<span class="st">&quot;X&quot;</span>)), <span class="kw">any_vars</span>((. <span class="op">%%</span><span class="st"> </span><span class="dv">50</span>) <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>. <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>))</code></pre></div>
+<pre><code>## # A tibble: 74 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 alexama…   594  1271   166   293    50    12    15   115    37    10
+##  2 alouma01  1667  5789   780  1777   236    50    31   427   156    80
+##  3 batteea…  1141  3586   393   969   150    17   104   449    13    12
+##  4 beckeri…   789  2227   345   570   100    12    45   243    66    26
+##  5 bergmda…  1349  2679   312   690   100    16    54   289    19    14
+##  6 berryke…  1383  4136   422  1053   150    23    58   343    45    46
+##  7 bigbeca…   712  2703   443   826   100    55    12   250   103    68
+##  8 bochtbr…  1538  5233   643  1478   250    21   100   658    43    41
+##  9 bosleth…   784  1581   183   430    50    12    20   158    47    24
+## 10 boyercl…  1725  5780   645  1396   200    33   162   654    41    28
+## # … with 64 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">is_whole &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="cf">if</span>(<span class="kw">is.numeric</span>(x)) <span class="kw">all</span>(<span class="kw">floor</span>(x) <span class="op">==</span><span class="st"> </span>x) <span class="cf">else</span> <span class="ot">FALSE</span>
+<span class="co">#batpos %&gt;% </span>
+<span class="co">#  keep(is_whole) %&gt;% </span>
+<span class="co">#  filter_if(~ all(floor(.) == .), any_vars((. %% 100) == 50))</span>
+batpos <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter_if</span>(is_whole, <span class="kw">any_vars</span>((. <span class="op">%%</span><span class="st"> </span><span class="dv">100</span>) <span class="op">==</span><span class="st"> </span><span class="dv">50</span>))</code></pre></div>
+<pre><code>## # A tibble: 380 x 22
+##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 adamsma…   707  2026   248   539   113     6    96   332     4     4
+##  2 alexada…   662  2450   369   811   164    30    61   459    20    28
+##  3 alexama…   594  1271   166   293    50    12    15   115    37    10
+##  4 alicelu…  1341  3971   551  1031   189    53    47   422    81    50
+##  5 allisbo…  1541  5032   811  1281   216    53   256   796    84    50
+##  6 almonbi…  1236  3330   390   846   138    25    36   296   128    60
+##  7 alouje01  1380  4345   448  1216   170    26    32   377    31    46
+##  8 alouma01  1667  5789   780  1777   236    50    31   427   156    80
+##  9 amarial…   702  1750   171   404    67    16    21   169    39    10
+## 10 aurilri…  1652  5721   745  1576   301    22   186   756    23    18
+## # … with 370 more rows, and 11 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
+## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;, BA &lt;dbl&gt;,
+## #   Err &lt;dbl&gt;, HRR &lt;dbl&gt;</code></pre>
+</div>
+<div id="tidy-evaluation-with-rlang" class="section level2">
+<h2><span class="header-section-number">3.2</span> Tidy evaluation with rlang</h2>
+<p>Symbols:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rlang)</code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;rlang&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
+## 
+##     %@%, as_function, flatten, flatten_chr, flatten_dbl,
+##     flatten_int, flatten_lgl, flatten_raw, invoke, list_along,
+##     modify, prepend, splice</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(pi, <span class="kw">expr</span>(pi), <span class="kw">eval</span>(<span class="kw">expr</span>(pi)), <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</code></pre></div>
+<pre><code>## 3.141593 pi 3.141593</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">is_symbol</span>(pi), <span class="kw">is_symbol</span>(<span class="kw">expr</span>(pi)))</code></pre></div>
+<pre><code>## FALSE TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">print_types &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
+  <span class="kw">print</span>(x)
+  <span class="kw">print</span>(<span class="kw">eval</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39;  Symbol:&#39;</span>, <span class="kw">is_symbol</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39; Environment:&#39;</span>, <span class="kw">is_environment</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39; Constant:&#39;</span>, <span class="kw">is_bare_atomic</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">  Call object:&#39;</span>, <span class="kw">is_call</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39; Expression:&#39;</span>, <span class="kw">is_expression</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39; Quosure:&#39;</span>, <span class="kw">is_quosure</span>(x))
+  <span class="kw">cat</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="dv">1</span>
+b &lt;-<span class="st"> </span><span class="dv">2</span>
+<span class="kw">sapply</span>(<span class="kw">c</span>(pi, <span class="dv">1</span>, <span class="kw">abs</span>(<span class="dv">1</span>), pi, <span class="kw">expr</span>(pi), <span class="kw">expr</span>(a<span class="op">+</span>b), <span class="kw">quo</span>(a<span class="op">+</span>b)),
+       print_types)</code></pre></div>
+<pre><code>## [1] 3.141593
+## [1] 3.141593
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 1
+## [1] 1
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 1
+## [1] 1
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## [1] 3.141593
+## [1] 3.141593
+##   Symbol: FALSE Environment: FALSE Constant: TRUE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## pi
+## [1] 3.141593
+##   Symbol: TRUE Environment: FALSE Constant: FALSE
+##   Call object: FALSE Expression: TRUE Quosure: FALSE
+## a + b
+## [1] 3
+##   Symbol: FALSE Environment: FALSE Constant: FALSE
+##   Call object: TRUE Expression: TRUE Quosure: FALSE
+## &lt;quosure&gt;
+## expr: ^a + b
+## env:  global
+## &lt;quosure&gt;
+## expr: ^a + b
+## env:  global
+##   Symbol: FALSE Environment: FALSE Constant: FALSE
+##   Call object: TRUE Expression: TRUE Quosure: TRUE</code></pre>
+<pre><code>## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL
+## 
+## [[3]]
+## NULL
+## 
+## [[4]]
+## NULL
+## 
+## [[5]]
+## NULL
+## 
+## [[6]]
+## NULL
+## 
+## [[7]]
+## NULL</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quos</span>(a<span class="op">+</span>b, a<span class="op">-</span>b)</code></pre></div>
+<pre><code>## &lt;list_of&lt;quosure&gt;&gt;
+## 
+## [[1]]
+## &lt;quosure&gt;
+## expr: ^a + b
+## env:  global
+## 
+## [[2]]
+## &lt;quosure&gt;
+## expr: ^a - b
+## env:  global</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">quote_this &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">enquo</span>(x)
+quote_these &lt;-<span class="st"> </span><span class="cf">function</span>(...) <span class="kw">enquos</span>(...)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># quosures allow code to be written from string variables</span>
+<span class="co"># and vice versa</span>
+<span class="kw">print</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">eval</span>(<span class="kw">parse_expr</span>(<span class="st">&quot;a + b&quot;</span>)))</code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">expr_text</span>(<span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span>))</code></pre></div>
+<pre><code>## [1] &quot;function (x) \nx^2&quot;</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="ch-dplyr.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="ch-caret.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["tidyverse-class.pdf", "tidyverse-class.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

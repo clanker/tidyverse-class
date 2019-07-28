@@ -1,0 +1,7 @@
+# caret Functionality {#ch:caret}
+
+Using _Applied Predictive Modeling_ [@kuhn2013applied].
+
+```{r}
+
+```

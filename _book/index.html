@@ -4,27 +4,27 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Hitchhiker’s Guide to the Tidyverse</title>
-  <meta name="description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <title>Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</title>
+  <meta name="description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Hitchhiker’s Guide to the Tidyverse" />
+  <meta property="og:title" content="Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta property="og:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="github-repo" content="clanker/tidyverse-class" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Hitchhiker’s Guide to the Tidyverse" />
+  <meta name="twitter:title" content="Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   
-  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   
 
 <meta name="author" content="Cory Lanker" />
 
 
-<meta name="date" content="2019-07-22" />
+<meta name="date" content="2019-07-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -113,6 +113,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.1" data-path="ch-dplyr.html"><a href="ch-dplyr.html#hoofin-it-with-dplyr"><i class="fa fa-check"></i><b>2.1</b> Hoofin’ it with dplyr</a></li>
 <li class="chapter" data-level="2.2" data-path="ch-dplyr.html"><a href="ch-dplyr.html#tidyr-and-relational-data"><i class="fa fa-check"></i><b>2.2</b> tidyr and relational data</a></li>
 </ul></li>
+<li class="chapter" data-level="3" data-path="ch-rlang.html"><a href="ch-rlang.html"><i class="fa fa-check"></i><b>3</b> dplyr closures and rlang</a><ul>
+<li class="chapter" data-level="3.1" data-path="ch-rlang.html"><a href="ch-rlang.html#trying-to-understand-the-closure-functions"><i class="fa fa-check"></i><b>3.1</b> Trying to understand the closure functions</a></li>
+<li class="chapter" data-level="3.2" data-path="ch-rlang.html"><a href="ch-rlang.html#tidy-evaluation-with-rlang"><i class="fa fa-check"></i><b>3.2</b> Tidy evaluation with rlang</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ch-caret.html"><a href="ch-caret.html"><i class="fa fa-check"></i><b>4</b> caret Functionality</a></li>
+<li class="chapter" data-level="5" data-path="ch-mlr.html"><a href="ch-mlr.html"><i class="fa fa-check"></i><b>5</b> the Machine Learning with R package</a></li>
+<li class="chapter" data-level="6" data-path="ch-keras.html"><a href="ch-keras.html"><i class="fa fa-check"></i><b>6</b> implementing neural networks in R</a></li>
+<li class="chapter" data-level="7" data-path="ch-tips.html"><a href="ch-tips.html"><i class="fa fa-check"></i><b>7</b> Tips and tricks</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -126,7 +134,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</a>
           </h1>
         </div>
 
@@ -135,41 +143,55 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title">Hitchhiker’s Guide to the Tidyverse</h1>
+<h1 class="title">Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</h1>
 <p class="author"><em>Cory Lanker</em></p>
-<p class="date"><em>2019-07-22</em></p>
+<p class="date"><em>2019-07-28</em></p>
 </div>
 <div id="introduction" class="section level1 unnumbered">
 <h1>Introduction</h1>
-<!--
-This bookdown notebook can be cloned via
-
-```bash
-git clone git@github.com:clanker/tidyverse-class.git
-```
-or downloaded as a 
-<zip file>[link](https://github.com/clanker/tidyverse-class/archive/master.zip).
+<p>This bookdown notebook can be cloned via</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">git</span> clone git@github.com:clanker/tidyverse-class.git</code></pre></div>
+<!--or downloaded as a 
+#<zip file>[link](https://github.com/clanker/tidyverse-class/archive/master.zip)
 -->
-<p>Introducing the tidyverse with two data sets:</p>
+<p>Introducing the tidyverse analyzing these data sets:</p>
 <ol style="list-style-type: decimal">
 <li>Basic plots with <code>tibble</code> and <code>ggplot2</code> using <code>Boston</code> house prices.</li>
 <li>Preprocessing with <code>tidyr</code> and <code>dplyr</code> using <code>Lahman</code> baseball data.</li>
 </ol>
-<p>Though some of these commands will be used, we won’t go deeply into the following tidyverse packages:</p>
+<p><strong>Other useful packages</strong></p>
+<p>Though some of these commands will be used, we won’t go deeply into the following tidyverse packages. These packages have an obvious function space, so knowing when to use these packages and how to find the appropriate function is easier than the packages discussed here.</p>
 <ol style="list-style-type: decimal">
 <li>Reading in data with <code>readr</code>.</li>
 <li>String manipulation with <code>stringr</code>.</li>
 <li>Dates and times with <code>lubridate</code>.</li>
 <li>Handling factors with <code>forcats</code>.</li>
+<li>Apply functions with <code>purrr</code>.</li>
 </ol>
-<p>R proficiency is assumed. These notes aim to bring a functional R coder into the tidyverse realm.</p>
+<p>Some good ways to learn about these packages:</p>
+<ul>
+<li><code>vignette()</code>, and search for documentation of that package,</li>
+<li>the cheat sheets for the packages on the RStudio website, or</li>
+<li>example(“function”) for helpful guidance on usage.</li>
+</ul>
+<p>R proficiency is assumed. These notes aim to bring a functional R coder into the tidyverse realm for modern data analysis.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># To install the necessary packages in the tidyverse:</span>
 <span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<p>This document is built with R Markdown, <strong>knitr</strong> <span class="citation">(Xie <a href="#ref-xie2015">2015</a>)</span>, and the <strong>bookdown</strong> package <span class="citation">(Xie <a href="#ref-R-bookdown">2019</a>)</span>.</p>
+<p><strong>to do list</strong></p>
+<ol style="list-style-type: decimal">
+<li>Add Chapter: computing using <code>caret</code>.</li>
+<li>Add Chapter: functions provided by <code>mlr</code>.</li>
+<li>Add Chapter: implementing <code>keras</code>.</li>
+<li>Add Chapter: tips and tricks for better <code>R</code> coding.</li>
+</ol>
+<p>Many references are made to Hadley Wickham’s book, <em>R for Data Science</em> <span class="citation">(Wickham and Grolemund <a href="#ref-wickham2016r">2016</a>)</span>. This document is built with R Markdown, <strong>knitr</strong> <span class="citation">(Xie <a href="#ref-xie2015">2015</a>)</span>, and the <strong>bookdown</strong> package <span class="citation">(Xie <a href="#ref-R-bookdown">2019</a>)</span>.</p>
 
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
+<div id="ref-wickham2016r">
+<p>Wickham, Hadley, and Garrett Grolemund. 2016. <em>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data</em>. “ O’Reilly Media, Inc.”</p>
+</div>
 <div id="ref-xie2015">
 <p>Xie, Yihui. 2015. <em>Dynamic Documents with R and Knitr</em>. 2nd ed. Boca Raton, Florida: Chapman; Hall/CRC. <a href="http://yihui.name/knitr/" class="uri">http://yihui.name/knitr/</a>.</p>
 </div>

@@ -4,27 +4,27 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse</title>
-  <meta name="description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <title>Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</title>
+  <meta name="description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse" />
+  <meta property="og:title" content="Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta property="og:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   <meta name="github-repo" content="clanker/tidyverse-class" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse" />
+  <meta name="twitter:title" content="Chapter 2 dplyr and tidyr | Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)" />
   
-  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities for current R programmers, heavily based on Hadley Wickham’s notes from R for Data Science" />
+  <meta name="twitter:description" content="A quick exploration of tidyverse capabilities and implementation of statistical learning methodology for current R programmers" />
   
 
 <meta name="author" content="Cory Lanker" />
 
 
-<meta name="date" content="2019-07-22" />
+<meta name="date" content="2019-07-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="ch-intro.html">
-<link rel="next" href="references.html">
+<link rel="next" href="ch-rlang.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -113,6 +113,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.1" data-path="ch-dplyr.html"><a href="ch-dplyr.html#hoofin-it-with-dplyr"><i class="fa fa-check"></i><b>2.1</b> Hoofin’ it with dplyr</a></li>
 <li class="chapter" data-level="2.2" data-path="ch-dplyr.html"><a href="ch-dplyr.html#tidyr-and-relational-data"><i class="fa fa-check"></i><b>2.2</b> tidyr and relational data</a></li>
 </ul></li>
+<li class="chapter" data-level="3" data-path="ch-rlang.html"><a href="ch-rlang.html"><i class="fa fa-check"></i><b>3</b> dplyr closures and rlang</a><ul>
+<li class="chapter" data-level="3.1" data-path="ch-rlang.html"><a href="ch-rlang.html#trying-to-understand-the-closure-functions"><i class="fa fa-check"></i><b>3.1</b> Trying to understand the closure functions</a></li>
+<li class="chapter" data-level="3.2" data-path="ch-rlang.html"><a href="ch-rlang.html#tidy-evaluation-with-rlang"><i class="fa fa-check"></i><b>3.2</b> Tidy evaluation with rlang</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ch-caret.html"><a href="ch-caret.html"><i class="fa fa-check"></i><b>4</b> caret Functionality</a></li>
+<li class="chapter" data-level="5" data-path="ch-mlr.html"><a href="ch-mlr.html"><i class="fa fa-check"></i><b>5</b> the Machine Learning with R package</a></li>
+<li class="chapter" data-level="6" data-path="ch-keras.html"><a href="ch-keras.html"><i class="fa fa-check"></i><b>6</b> implementing neural networks in R</a></li>
+<li class="chapter" data-level="7" data-path="ch-tips.html"><a href="ch-tips.html"><i class="fa fa-check"></i><b>7</b> Tips and tricks</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -126,7 +134,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Hitchhiker’s Guide to the Tidyverse (and Statistical Learning in R)</a>
           </h1>
         </div>
 
@@ -152,9 +160,9 @@ gt_<span class="dv">500</span> &lt;-<span class="st"> </span>batting <span class
 <span class="st">  </span><span class="kw">group_by</span>(playerID) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarize_at</span>(is_col[<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>)], sum, <span class="dt">na.rm =</span> T) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(G <span class="op">&gt;=</span><span class="st"> </span><span class="dv">500</span>)</code></pre></div>
-<p>All Ha~ Green~ statistics:</p>
+<p>All Ha~ Green~ statistics to confirm that the data reduction looks right:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batting <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(playerID, <span class="st">&quot;greenha&quot;</span>))</code></pre></div>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(playerID, <span class="st">&quot;greenha&quot;</span>))  <span class="co"># a taste of `stringr`</span></code></pre></div>
 <pre><code>## # A tibble: 14 x 22
 ##    playerID yearID stint teamID lgID      G    AB     R     H   X2B   X3B
 ##    &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;fct&gt;  &lt;fct&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
@@ -218,28 +226,37 @@ fielding <span class="op">%&gt;%</span>
 ## 
 ## $DP
 ## [1] 0</code></pre>
-<p>Removing InnOuts is a good idea, too many missing.</p>
+<p>That’s odd, just one error NA.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fielding <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(E))</code></pre></div>
+<pre><code>## # A tibble: 1 x 18
+##   playerID yearID stint teamID lgID  POS       G    GS InnOuts    PO     A
+##   &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;fct&gt;  &lt;fct&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 fordbi01   1936     1 BSN    NL    P         1    NA      NA     0     0
+## # … with 7 more variables: E &lt;int&gt;, DP &lt;int&gt;, PB &lt;int&gt;, WP &lt;int&gt;,
+## #   SB &lt;int&gt;, CS &lt;int&gt;, ZR &lt;int&gt;</code></pre>
+<p>Removing InnOuts is a good idea, too many missing, and those <code>NA</code>s aren’t relevant to the analysis.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">is_field =<span class="st"> </span><span class="kw">names</span>(fielding)[<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>)]
 pos_tot &lt;-<span class="st"> </span>fielding <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(is_field) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(playerID, POS) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(is_field) <span class="op">%&gt;%</span><span class="st">   </span><span class="co"># cull columns</span>
+<span class="st">  </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># drop the missing value</span>
+<span class="st">  </span><span class="kw">group_by</span>(playerID, POS) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># want the most G by POS assigned to playerID</span>
 <span class="st">  </span><span class="kw">summarize_all</span>(sum) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(G <span class="op">&gt;=</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">arrange</span>(playerID, <span class="kw">desc</span>(G)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(G <span class="op">&gt;=</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># only those with 100 G at a POS</span>
+<span class="st">  </span><span class="kw">arrange</span>(playerID, <span class="kw">desc</span>(G)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># if G instead of desc(G), use last(POS)</span>
 <span class="st">  </span><span class="kw">group_by</span>(playerID) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pos1 =</span> <span class="kw">first</span>(POS)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(POS <span class="op">==</span><span class="st"> </span>pos1) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(POS <span class="op">==</span><span class="st"> </span>pos1) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># assign position with most games to POS</span>
 <span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>pos1)</code></pre></div>
 </div>
 <div id="tidyr-and-relational-data" class="section level2">
 <h2><span class="header-section-number">2.2</span> tidyr and relational data</h2>
 <p>Add fielding info to batting tibble.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(batpos &lt;-<span class="st"> </span>gt_<span class="dv">500</span> <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">   </span><span class="kw">left_join</span>(pos_tot, <span class="dt">by =</span> <span class="st">&quot;playerID&quot;</span>))</code></pre></div>
+<span class="st">   </span><span class="kw">left_join</span>(pos_tot, <span class="dt">by =</span> <span class="st">&quot;playerID&quot;</span>, <span class="dt">suffix =</span> <span class="kw">c</span>(<span class="st">&quot;.h&quot;</span>, <span class="st">&quot;.f&quot;</span>)))</code></pre></div>
 <pre><code>## # A tibble: 2,667 x 19
-##    playerID   G.x    AB     R     H   X2B   X3B    HR   RBI    SB    CS
+##    playerID   G.h    AB     R     H   X2B   X3B    HR   RBI    SB    CS
 ##    &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
 ##  1 aaronha…  3298 12364  2174  3771   624    98   755  2297   240    73
 ##  2 abbotku…   702  2044   273   523   109    23    62   242    22    11
@@ -252,7 +269,7 @@ pos_tot &lt;-<span class="st"> </span>fielding <span class="op">%&gt;%</span>
 ##  9 adamsbo…   797  2604   395   701   107    31    25   188    25    30
 ## 10 adamsgl…   661  1617   152   452    79     5    34   225     6    10
 ## # … with 2,657 more rows, and 8 more variables: BB &lt;int&gt;, SO &lt;int&gt;,
-## #   POS &lt;chr&gt;, G.y &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;</code></pre>
+## #   POS &lt;chr&gt;, G.f &lt;int&gt;, PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;</code></pre>
 <p>Counts of positions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(POS) <span class="op">%&gt;%</span><span class="st"> </span>
@@ -289,9 +306,9 @@ batting <span class="op">%&gt;%</span><span class="st"> </span>
 ## 10 moraljo…   1981     1 BAL    AL       38    86     6    21     3     0
 ## # … with 16 more rows, and 29 more variables: HR.x &lt;int&gt;, RBI.x &lt;int&gt;,
 ## #   SB.x &lt;int&gt;, CS.x &lt;int&gt;, BB.x &lt;int&gt;, SO.x &lt;int&gt;, IBB &lt;int&gt;, HBP &lt;int&gt;,
-## #   SH &lt;int&gt;, SF &lt;int&gt;, GIDP &lt;int&gt;, G.x &lt;int&gt;, AB.y &lt;int&gt;, R.y &lt;int&gt;,
+## #   SH &lt;int&gt;, SF &lt;int&gt;, GIDP &lt;int&gt;, G.h &lt;int&gt;, AB.y &lt;int&gt;, R.y &lt;int&gt;,
 ## #   H.y &lt;int&gt;, X2B.y &lt;int&gt;, X3B.y &lt;int&gt;, HR.y &lt;int&gt;, RBI.y &lt;int&gt;,
-## #   SB.y &lt;int&gt;, CS.y &lt;int&gt;, BB.y &lt;int&gt;, SO.y &lt;int&gt;, POS &lt;chr&gt;, G.y &lt;int&gt;,
+## #   SB.y &lt;int&gt;, CS.y &lt;int&gt;, BB.y &lt;int&gt;, SO.y &lt;int&gt;, POS &lt;chr&gt;, G.f &lt;int&gt;,
 ## #   PO &lt;int&gt;, A &lt;int&gt;, E &lt;int&gt;, DP &lt;int&gt;</code></pre>
 <p>Drop these two DHs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">batpos &lt;-<span class="st"> </span>batpos <span class="op">%&gt;%</span><span class="st"> </span>
@@ -341,7 +358,7 @@ p1</code></pre></div>
         </div>
       </div>
 <a href="ch-intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="ch-rlang.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
