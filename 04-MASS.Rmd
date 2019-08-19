@@ -1,0 +1,134 @@
+# MASS code and applications {#ch:mass}
+
+Here is code from _Modern Applied Statistics with S_ that
+introduces many computing techniques to tackle 
+statistical learning problems,
+updated when possible to the tidyverse [@venables2002modern].
+
+```{r load-libraries}
+library(MASS)
+library(tidyverse)
+```
+
+## Chapter 1: Introduction
+```{r ex-1.1a}
+set.seed(0)
+x <- rnorm(1000)
+y <- rnorm(1000)
+par(mfrow=c(1, 3))
+truehist(c(x, y+3), nbins=25)
+contour(dd <- kde2d(x, y))
+image(dd)
+```
+```{r ex-1.1a-tidy}
+set.seed(0)
+dat <- tibble(x = rnorm(1000), y = rnorm(1000))
+dat <- dat %>%
+  mutate(y = y + 3)
+p1 <- dat %>% 
+  gather() %>% 
+  ggplot() +
+  geom_histogram(aes(value), binwidth = 0.5)
+p2 <- dat %>%
+  ggplot() +
+  geom_density2d(aes(x, y))
+p3 <- dat %>%
+  ggplot() +
+  geom_hex(aes(x, y), bins = 12)
+ggplot() +
+  coord_equal(xlim = c(0, 7.5), ylim = c(0, 4.5), expand = c(0, 0)) +
+  annotation_custom(ggplotGrob(p1),
+                    xmin = 0, xmax = 3,
+                    ymin = 3, ymax = 4.5) +
+  annotation_custom(ggplotGrob(p2),
+                    xmin = 0, xmax = 3,
+                    ymin = 0, ymax = 3) +
+  annotation_custom(ggplotGrob(p3),
+                    xmin = 3, xmax = 7.5) +
+  labs(x = NULL, y = NULL,
+       title = 'Density plots for x and y') +
+  theme_void()
+```
+
+```{r ex-1.1b}
+set.seed(0)
+x <- seq(1, 20, 0.5)
+w <- 1 + x/2
+y <- x + w*rnorm(x)
+dum <- tibble(x, y, w)
+rm(x, y, w)
+cat('Data set "dum":\n')
+print(dum)
+fm <- dum %>% 
+  lm(y ~ x, data = .)
+cat("Linear regression summary:\n")
+summary(fm)
+fm1 <- dum %>%
+  lm(y ~ x, data = ., weight = 1/w^2)
+cat("Weighted linear regression summary:\n")
+summary(fm1)
+```
+
+```{r ex-1.1c}
+lrf <- loess(y ~ x, dum)
+spline_fit <- as_tibble(spline(dum$x, fitted(lrf)))
+p1 <- dum %>% 
+  full_join(spline_fit, by = 'x',  suffix = c('r', 's')) %>%
+  arrange(x) %>% 
+  ggplot() + 
+  geom_point(aes(x, yr)) +
+  geom_abline(slope = 1, intercept = 0, lty = 3, col = 3) +
+  geom_abline(slope = fm$coefficients[2], intercept = fm$coefficients[1],
+              col = 4) +
+  geom_abline(slope = fm1$coefficients[2], intercept = fm1$coefficients[1],
+              col = 5, lty = 4) +
+  geom_line(aes(x, ys), col = 2)
+p2 <- qplot(fitted(fm), resid(fm), xlab = "Fitted Values", ylab = "Residuals")
+p3 <- tibble(r = resid(fm)) %>% 
+  ggplot(aes(sample = r)) +
+  geom_qq() +
+  geom_qq_line(line.p = c(1/6, 5/6))
+ggplot() +
+  coord_equal(xlim = c(0, 7.5), ylim = c(0, 2.5), expand = c(0, 0)) +
+  annotation_custom(ggplotGrob(p1),
+                    xmin = 0, xmax = 2.5) +
+  annotation_custom(ggplotGrob(p2),
+                    xmin = 2.5, xmax = 5) +
+  annotation_custom(ggplotGrob(p3),
+                    xmin = 5, xmax = 7.5) +
+  labs(x = NULL, y = NULL,
+       title = 'Residual plots for the linear model') +
+  theme_void()
+```
+```{r ex-1.2a}
+# pairs(hills)
+dat <- as_tibble(hills)
+dat %>%
+  mutate(grade = factor(ntile(climb/dist, 3))) %>% 
+  GGally::ggpairs(aes(color = grade))
+```
+```{r ex-1.2b}
+attach(hills)
+plot(dist, time)
+abline(lm(time ~ dist))
+abline(MASS::lqs(time ~ dist), lty = 3, col = 4)
+# identify(dist, time, row.names(hills))  # only works in console/cmd line
+detach()
+```
+```{r ex-1.3a}
+# michelson
+as_tibble(michelson) %>% 
+ ggplot(aes(Expt, Speed)) +
+  geom_point() + #aes(color = row(Speed))) +
+  geom_smooth() +
+  labs(title="Speed of Light Data",
+       x="Experiment No.")
+fm <- aov(Speed ~ Run + Expt)
+summary(fm)
+```
+```{r ex-1.3b}
+fm0 <- update(fm, .~ . - Run)
+anova(fm0, fm)
+```
+
+

@@ -1,0 +1,9 @@
+# the Machine Learning with R package {#ch:mlr}
+
+Using `mlr` [@mlr].
+
+_more to come_
+
+```{r}
+
+```

@@ -1,0 +1,47 @@
+# caret Functionality {#ch:caret}
+
+Here is code from _Applied Predictive Modeling_ that
+focuses on their R package `caret` providing functions
+for statistical learning [@kuhn2013applied].
+
+```{r}
+library(MASS)
+library(AppliedPredictiveModeling)
+library(caret)
+library(tidyverse)
+apm_path <- paste('/Users/clanker/Documents/Repo16/stat-learning/',
+  'apm/AppliedPredictiveModeling-master/', sep='')
+# use `data("dataset")` to load data frames
+```
+
+Code listed is gathered from the following source:
+```
+################################################################################
+### R code from Applied Predictive Modeling (2013) by Kuhn and Johnson.
+### Copyright 2013 Kuhn and Johnson
+### Web Page: http://www.appliedpredictivemodeling.com
+### Contact: Max Kuhn (mxkuhn@gmail.com)
+###
+### Chapter 2: A Short Tour of the Predictive Modeling Process
+###
+### Required packages: AppliedPredictiveModeling, earth, caret, lattice
+###
+### Data used: The FuelEconomy data in the AppliedPredictiveModeling package
+###
+### Notes: 
+### 1) This code is provided without warranty.
+###
+### 2) This code should help the user reproduce the results in the
+### text. There will be differences between this code and what is is
+### the computing section. For example, the computing sections show
+### how the source functions work (e.g. randomForest() or plsr()),
+### which were not directly used when creating the book. Also, there may be 
+### syntax differences that occur over time as packages evolve. These files 
+### will reflect those changes.
+###
+### 3) In some cases, the calculations in the book were run in 
+### parallel. The sub-processes may reset the random number seed.
+### Your results may slightly vary.
+###
+################################################################################
+```

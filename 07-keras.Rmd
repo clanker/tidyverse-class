@@ -1,0 +1,9 @@
+# implementing neural networks in R {#ch:keras}
+
+Using `keras`.
+
+_more to come_
+
+```{r}
+
+```
